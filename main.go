@@ -8,6 +8,8 @@ import (
 )
 
 func home(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Server", "Go")
+	
 	w.Write([]byte("Hello from BG Tracker"))
 }
 
@@ -30,12 +32,19 @@ func gameCreate(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Page to create a new game..."))
 }
 
+func gameCreatePost(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusCreated)
+	
+	w.Write([]byte("Save the new game..."))
+}
+
 func main() {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", home)
-	mux.HandleFunc("/games", gamesView)
-	mux.HandleFunc("/games/{id}", gameView)
-	mux.HandleFunc("/games/new", gameCreate)
+	mux.HandleFunc("GET /", home)
+	mux.HandleFunc("GET /games", gamesView)
+	mux.HandleFunc("GET /games/{id}", gameView)
+	mux.HandleFunc("GET /games/new", gameCreate)
+	mux.HandleFunc("POST /games/new", gameCreatePost)
 
 	log.Print("starting server on :4000")
 
