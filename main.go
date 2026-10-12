@@ -24,9 +24,7 @@ func gameView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	
-	msg := fmt.Sprintf("Viewing game ID %d details.", id)
-
-	w.Write([]byte(msg))
+	fmt.Fprintf(w, "Viewing game ID %d details.", id)
 }
 func gameCreate(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Page to create a new game..."))
