@@ -13,6 +13,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 
 	files := []string{
 		"./assets/html/pages/home.tmpl.html",
+		"./assets/html/partials/nav.tmpl.html",
 		"./assets/html/pages/base.tmpl.html",
 	}
 
