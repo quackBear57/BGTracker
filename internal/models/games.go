@@ -9,7 +9,7 @@ type  Game struct {
 	ID				int
 	Title			string
 	Bgg_ID			int
-	price			float
+	price			float64
 	added			time.Time
 	state			string
 	year_pub		int
@@ -27,7 +27,7 @@ type GameModel struct {
 
 func (m *GameModel) Insert(title string,
 	bgg_id int,
-	price float,
+	price float64,
 	state string,
 	year_pub int,
 	description string,
