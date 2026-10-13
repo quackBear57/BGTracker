@@ -37,7 +37,21 @@ func (m *GameModel) Insert(title string,
 	playtime_max int,
 	scoring bool) (int, error) {
 	
-	return 0, nil
+	stmt := `INSERT INTO games (title, bgg_id, price, added, state, year_pub,
+	description, player_min, player_max, playtime_min, playtime_max,
+	age_min, scoring) VALUES (?, ?, ?, UTC_TIMESTAMP(), ?, ?,
+	?, ?, ?, ?, ?,
+	?, ?))`
+
+	result, err := m.DB.Exec(stmt, title,  bgg_id, price, state, year_pub,
+	description, player_min, player_max, playtime_min, playtime_max,
+	age_min, scoring)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return int(id), nil
 }
 
 func (m *GameModel) Get(id int) (Game, error) {
