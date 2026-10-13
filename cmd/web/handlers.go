@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 	"strconv"
 )
@@ -48,7 +47,7 @@ func (app *application) gameCreate(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Page to create a new game..."))
 }
 
-func gameCreatePost(w http.ResponseWriter, r *http.Request) {
+func (app *application) gameCreatePost(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte("Save the new game..."))
 }
