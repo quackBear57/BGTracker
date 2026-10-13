@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func home(w http.ResponseWriter, r *http.Request) {
+func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Server", "Go")
 
 	files := []string{
@@ -19,22 +19,22 @@ func home(w http.ResponseWriter, r *http.Request) {
 
 	ts, err := template.ParseFiles(files...)
 	if err != nil {
-		log.Print(err.Error())
+		app.logger.Error(err.Error(), "method", r.Method, "uri", r.URL.RequestURI())
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return	}
 
 	err = ts.ExecuteTemplate(w, "base", nil)
 	if err != nil {
-		log.Print(err.Error())
+		app.logger.Error(err.Error(), "method", r.Method, "uri", r.URL.RequestURI())
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
 }
 
-func gamesView(w http.ResponseWriter, r *http.Request) {
+func (app *application) gamesView(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Page to view all of the games..."))
 }
 
-func gameView(w http.ResponseWriter, r *http.Request) {
+func (app *application) gameView(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil || id < 1 {
 		http.NotFound(w,r)
@@ -44,7 +44,7 @@ func gameView(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Viewing game ID %d details.", id)
 }
 
-func gameCreate(w http.ResponseWriter, r *http.Request) {
+func (app *application) gameCreate(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Page to create a new game..."))
 }
 
