@@ -47,6 +47,27 @@ func (app *application) gameCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) gameCreatePost(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte("Save the new game..."))
+	title := "Test Game 1"
+	bgg_id := 12345
+	price := 20.99
+	state := "owned"
+	year_pub := 1999
+	description := "test desc"
+	player_min := 1
+	player_max := 99
+	playtime_min := 10
+	playtime_max := 120
+	age_min := 10
+	scoring := true
+
+	id, err := app.games.Insert(title, bgg_id, price, state, year_pub,
+	description, player_min, player_max, playtime_min, playtime_max,
+	age_min, scoring)
+
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	http.Redirect(w, r, fmt.Sprintf("/games/%d", id), http.StatusSeeOther)
 }
