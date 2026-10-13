@@ -35,6 +35,7 @@ func (m *GameModel) Insert(title string,
 	player_max int,
 	playtime_min int,
 	playtime_max int,
+	age_min int,
 	scoring bool) (int, error) {
 	
 	stmt := `INSERT INTO games (title, bgg_id, price, added, state, year_pub,
