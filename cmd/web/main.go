@@ -7,11 +7,14 @@ import (
 	"net/http"
 	"os"
 
+	"bgtracker.ndr54.com/internal/models"
+
 	_ "github.com/go-sql-driver/mysql"
 )
 
 type application struct {
 	logger *slog.Logger
+	games *models.GameModel
 }
 
 
@@ -36,6 +39,7 @@ func main() {
 
 	app := &application{
 		logger: logger,
+		games: &models.GameModel{DB: db},
 	}
 
 	logger.Info("starting server", slog.String("addr", *addr))
