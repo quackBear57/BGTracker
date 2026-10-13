@@ -2,7 +2,7 @@
 
 FROM golang:1.27
 
-WORKDIR /app
+WORKDIR /bgtracker
 
 COPY go.mod go.sum ./
 
