@@ -19,26 +19,26 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for _, game := range games {
-		fmt.Fprintf(w, "%+v\n", game)
+	files := []string{
+		"./assets/html/pages/home.tmpl.html",
+		"./assets/html/partials/nav.tmpl.html",
+		"./assets/html/base.tmpl.html",
 	}
 
-	// files := []string{
-	// 	"./assets/html/pages/home.tmpl.html",
-	// 	"./assets/html/partials/nav.tmpl.html",
-	// 	"./assets/html/base.tmpl.html",
-	// }
+	ts, err := template.ParseFiles(files...)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
 
-	// ts, err := template.ParseFiles(files...)
-	// if err != nil {
-	// 	app.serverError(w, r, err)
-	// 	return
-	// }
+	data := templateData{
+		Games: games,
+	}
 
-	// err = ts.ExecuteTemplate(w, "base", nil)
-	// if err != nil {
-	// 	app.serverError(w, r, err)
-	// }
+	err = ts.ExecuteTemplate(w, "base", data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
 }
 
 func (app *application) gamesView(w http.ResponseWriter, r *http.Request) {
