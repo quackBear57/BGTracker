@@ -16,7 +16,7 @@ func newTemplateCache() (map[string]*template.Template, error) {
 	cache := map[string]*template.Template{}
 
 	// Add more specific *.tmpl.html here?
-	pages, err := filepath.Glob("./assets/html/pages/*.html")
+	pages, err := filepath.Glob("./assets/html/pages/*tmpl.html")
 	if err != nil {
 		return nil, err
 	}
