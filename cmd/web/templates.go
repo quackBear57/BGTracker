@@ -6,5 +6,5 @@ import(
 
 type templateData struct {
 	Game			models.Game
-	games			[]models.Game
+	Games			[]models.Game
 }
