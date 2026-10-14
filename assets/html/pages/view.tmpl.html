@@ -1,0 +1,17 @@
+{{define "title"}}Game #{{.ID}}{{end}}
+
+{{define "main"}}
+    <div class="snippet">
+        <div class="metadata">
+            <strong>{{.Title}}</strong>
+            <span>#{{.ID}}</span>
+        </div>
+        <pre><code>Description: {{.Description}}</code></pre>
+        <pre><code>Boardgame Geek ID: {{.Bgg_ID}}</code></pre>
+        <pre><code>Price: {{.Price}}</code></pre>
+        <pre><code>State: {{.State}}</code></pre>
+        <div class="metadata">
+            <time>Added: {{.Added}}</time>
+        </div>
+    </div>
+{{end}}
