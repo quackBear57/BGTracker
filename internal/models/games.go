@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"errors"
 	"time"
 )
 
@@ -9,16 +10,17 @@ type  Game struct {
 	ID				int
 	Title			string
 	Bgg_ID			int
-	price			float64
-	added			time.Time
-	state			string
-	year_pub		int
-	description		string
-	player_min		int
-	player_max		int
-	playtime_min	int
-	playtime_max	int
-	scoring			bool
+	Price			float64
+	Added			time.Time
+	State			string
+	Year_pub		int
+	Description		string
+	Player_min		int
+	Player_max		int
+	Playtime_min	int
+	Playtime_max	int
+	Age_min			int
+	Scoring			bool
 }
 
 type GameModel struct {
@@ -61,7 +63,28 @@ func (m *GameModel) Insert(title string,
 }
 
 func (m *GameModel) Get(id int) (Game, error) {
-	return Game{}, nil
+	stmt := `SELECT id, title, bgg_id, price, added, state, year_pub,
+	description, player_min, player_max, playtime_min, playtime_max,
+	age_min, scoring FROM games WHERE id = ?`
+
+	row := m.DB.QueryRow(stmt, id)
+
+	var g Game
+
+	err := row.Scan(&g.ID, &g.Title, &g.Bgg_ID, &g.Price, &g.Added, &g.State,
+	&g.Year_pub, &g.Description, &g.Player_min, &g.Player_max, &g.Playtime_min,
+	&g.Playtime_max, &g.Age_min, &g.Scoring)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return Game{}, ErrNoRecord
+		default:
+			return Game{}, err
+		}
+	}
+
+	return g, nil
 }
 
 func (m *GameModel) Latest() ([]Game, error) {
