@@ -18,18 +18,6 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// files := []string{
-	// 	"./assets/html/pages/home.tmpl.html",
-	// 	"./assets/html/partials/nav.tmpl.html",
-	// 	"./assets/html/base.tmpl.html",
-	// }
-
-	// ts, err := template.ParseFiles(files...)
-	// if err != nil {
-	// 	app.serverError(w, r, err)
-	// 	return
-	// }
-
 	data := templateData{
 		Games: games,
 	}
@@ -65,18 +53,6 @@ func (app *application) gameView(w http.ResponseWriter, r *http.Request) {
 	data := templateData{
 		Game: game,
 	}
-
-	// files := []string{
-	// 	"./assets/html/base.tmpl.html",
-	// 	"./assets/html/partials/nav.tmpl.html",
-	// 	"./assets/html/pages/view.tmpl.html",
-	// }
-
-	// ts, err := template.ParseFiles(files...)
-	// if err != nil {
-	// 	app.serverError(w, r, err)
-	// 	return
-	// }
 
 	err = app.render(w, r, http.StatusOK, "view.tmpl.html", data)
 	if err != nil {
