@@ -3,7 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
-	"html/template"
+	// "html/template"
 	"net/http"
 	"strconv"
 
@@ -13,22 +13,32 @@ import (
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Server", "Go")
 
-	files := []string{
-		"./assets/html/pages/home.tmpl.html",
-		"./assets/html/partials/nav.tmpl.html",
-		"./assets/html/pages/base.tmpl.html",
-	}
-
-	ts, err := template.ParseFiles(files...)
+	games, err := app.games.Latest()
 	if err != nil {
 		app.serverError(w, r, err)
 		return
 	}
 
-	err = ts.ExecuteTemplate(w, "base", nil)
-	if err != nil {
-		app.serverError(w, r, err)
+	for _, game := range games {
+		fmt.Fprintf(w, "%+v\n", game)
 	}
+	
+	// files := []string{
+	// 	"./assets/html/pages/home.tmpl.html",
+	// 	"./assets/html/partials/nav.tmpl.html",
+	// 	"./assets/html/pages/base.tmpl.html",
+	// }
+
+	// ts, err := template.ParseFiles(files...)
+	// if err != nil {
+	// 	app.serverError(w, r, err)
+	// 	return
+	// }
+
+	// err = ts.ExecuteTemplate(w, "base", nil)
+	// if err != nil {
+	// 	app.serverError(w, r, err)
+	// }
 }
 
 func (app *application) gamesView(w http.ResponseWriter, r *http.Request) {
