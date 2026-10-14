@@ -97,5 +97,42 @@ func (m *GameModel) Get(id int) (Game, error) {
 }
 
 func (m *GameModel) Latest() ([]Game, error) {
-	return nil, nil
+	stmt := `SELECT id, title, bgg_id, price, added, state, year_pub,
+	description, player_min, player_max, playtime_min, playtime_max,
+	age_min, scoring FROM games WHERE added < DATE_ADD(UTC_TIMESTAMP(), 
+	INTERVAL ? DAY) ORDER BY id DESC LIMIT 10`
+
+	rows, err := m.DB.Query(stmt, 30)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var games []Game
+
+	for rows.Next() {
+		var g Game
+		var desc_nullstr sql.NullString
+		
+		err = rows.Scan(&g.ID, &g.Title, &g.Bgg_ID, &g.Price, &g.Added, &g.State,
+		&g.Year_pub, &desc_nullstr, &g.Player_min, &g.Player_max, &g.Playtime_min,
+		&g.Playtime_max, &g.Age_min, &g.Scoring)
+		
+		if err != nil {
+			return nil, err
+		}
+
+		if desc_nullstr.Valid {
+			g.Description = desc_nullstr.String
+		}
+
+		games = append(games, g)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	
+	return games, nil
 }
