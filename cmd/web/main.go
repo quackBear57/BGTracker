@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"flag"
+	"html/template"
 	"log/slog"
 	"net/http"
 	"os"
@@ -13,10 +14,10 @@ import (
 )
 
 type application struct {
-	logger *slog.Logger
-	games *models.GameModel
+	logger				*slog.Logger
+	games				*models.GameModel
+	templateCache		map[string]*template.Template
 }
-
 
 func main() {
 	addr := flag.String("addr", ":4000", "HTTP network address")
@@ -37,9 +38,16 @@ func main() {
 
 	defer db.Close()
 
+	templateCache, err := newTemplateCache()
+	if err != nil {
+		logger.Error(err.Error())
+		os.Exit(1)
+	}
+
 	app := &application{
 		logger: logger,
 		games: &models.GameModel{DB: db},
+		templateCache: templateCache,
 	}
 
 	logger.Info("starting server", slog.String("addr", *addr))

@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"html/template"
 	"net/http"
 	"strconv"
 
@@ -19,23 +18,23 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	files := []string{
-		"./assets/html/pages/home.tmpl.html",
-		"./assets/html/partials/nav.tmpl.html",
-		"./assets/html/base.tmpl.html",
-	}
+	// files := []string{
+	// 	"./assets/html/pages/home.tmpl.html",
+	// 	"./assets/html/partials/nav.tmpl.html",
+	// 	"./assets/html/base.tmpl.html",
+	// }
 
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		app.serverError(w, r, err)
-		return
-	}
+	// ts, err := template.ParseFiles(files...)
+	// if err != nil {
+	// 	app.serverError(w, r, err)
+	// 	return
+	// }
 
 	data := templateData{
 		Games: games,
 	}
 
-	err = ts.ExecuteTemplate(w, "base", data)
+	err = app.render(w, r, http.StatusOK, "home.tmpl.html", data)
 	if err != nil {
 		app.serverError(w, r, err)
 	}
@@ -63,19 +62,23 @@ func (app *application) gameView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	files := []string{
-		"./assets/html/base.tmpl.html",
-		"./assets/html/partials/nav.tmpl.html",
-		"./assets/html/pages/view.tmpl.html",
+	data := templateData{
+		Game: game,
 	}
 
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		app.serverError(w, r, err)
-		return
-	}
+	// files := []string{
+	// 	"./assets/html/base.tmpl.html",
+	// 	"./assets/html/partials/nav.tmpl.html",
+	// 	"./assets/html/pages/view.tmpl.html",
+	// }
 
-	err = ts.ExecuteTemplate(w, "base", game)
+	// ts, err := template.ParseFiles(files...)
+	// if err != nil {
+	// 	app.serverError(w, r, err)
+	// 	return
+	// }
+
+	err = app.render(w, r, http.StatusOK, "view.tmpl.html", data)
 	if err != nil {
 		app.serverError(w, r, err)
 	}
