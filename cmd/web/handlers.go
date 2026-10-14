@@ -3,7 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
-	// "html/template"
+	"html/template"
 	"net/http"
 	"strconv"
 
@@ -22,7 +22,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	for _, game := range games {
 		fmt.Fprintf(w, "%+v\n", game)
 	}
-	
+
 	// files := []string{
 	// 	"./assets/html/pages/home.tmpl.html",
 	// 	"./assets/html/partials/nav.tmpl.html",
@@ -62,8 +62,23 @@ func (app *application) gameView(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	
-	fmt.Fprintf(w, "%+v", game)
+
+	files := []string{
+		"./assets/html/pages/base.tmpl.html",
+		"./assets/html/partials/nav.tmpl.html",
+		"./assets/html/pages/home.tmpl.html",
+	}
+
+	ts, err := template.ParseFiles(files...)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	err = ts.ExecuteTemplate(w, "base", game)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
 }
 
 func (app *application) gameCreate(w http.ResponseWriter, r *http.Request) {
