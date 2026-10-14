@@ -1,6 +1,7 @@
-{{define "title"}}Game #{{.ID}}{{end}}
+{{define "title"}}Game #{{.Game.ID}}{{end}}
 
 {{define "main"}}
+    {{with .Game}}
     <div class="snippet">
         <div class="metadata">
             <strong>{{.Title}}</strong>
@@ -14,4 +15,5 @@
             <time>Added: {{.Added}}</time>
         </div>
     </div>
+    {{end}}
 {{end}}
