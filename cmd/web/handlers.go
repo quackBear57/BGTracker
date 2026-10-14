@@ -1,10 +1,13 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
+
+	"bgtracker.ndr54.com/internal/models"
 )
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
@@ -38,8 +41,19 @@ func (app *application) gameView(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w,r)
 		return
 	}
+
+	game, err := app.games.Get(id)
+	if err != nil {
+		switch {
+		case errors.Is(err, models.ErrNoRecord):
+			http.NotFound(w,r)
+		default:
+			app.serverError(w, r, err)
+		}
+		return
+	}
 	
-	fmt.Fprintf(w, "Viewing game ID %d details.", id)
+	fmt.Fprintf(w, "%+v", game)
 }
 
 func (app *application) gameCreate(w http.ResponseWriter, r *http.Request) {
