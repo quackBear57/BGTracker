@@ -67,12 +67,16 @@ func (m *GameModel) Get(id int) (Game, error) {
 	description, player_min, player_max, playtime_min, playtime_max,
 	age_min, scoring FROM games WHERE id = ?`
 
+	// Creating temporary variable to handle NULL values for the description
+	// field
+	var desc_nullstr sql.NullString
+
 	row := m.DB.QueryRow(stmt, id)
 
 	var g Game
 
 	err := row.Scan(&g.ID, &g.Title, &g.Bgg_ID, &g.Price, &g.Added, &g.State,
-	&g.Year_pub, &g.Description, &g.Player_min, &g.Player_max, &g.Playtime_min,
+	&g.Year_pub, &desc_nullstr, &g.Player_min, &g.Player_max, &g.Playtime_min,
 	&g.Playtime_max, &g.Age_min, &g.Scoring)
 
 	if err != nil {
@@ -82,6 +86,11 @@ func (m *GameModel) Get(id int) (Game, error) {
 		default:
 			return Game{}, err
 		}
+	}
+
+	// Convert temporary var to the g description field if not NULL
+	if desc_nullstr.Valid {
+		g.Description = desc_nullstr.String
 	}
 
 	return g, nil
