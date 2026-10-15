@@ -8,6 +8,7 @@ import(
 )
 
 type templateData struct {
+	CurrentYear		int
 	Game			models.Game
 	Games			[]models.Game
 }
