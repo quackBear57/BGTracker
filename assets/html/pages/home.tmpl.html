@@ -12,7 +12,7 @@
         {{range .Games}}
         <tr>
             <td><a href="/games/{{.ID}}">{{.Title}}</a></td>
-            <td>{{.Added}}</td>
+            <td>{{humanDate .Added}}</td>
             <td>#{{.ID}}</td>
         </tr>
         {{end}}
