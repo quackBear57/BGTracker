@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-func (app *application) routes() *http.ServeMux {
+func (app *application) routes() http.Handler {
 	mux := http.NewServeMux()
 
 	fileServer := http.FileServer(http.Dir("./assets/static/"))
@@ -16,5 +16,5 @@ func (app *application) routes() *http.ServeMux {
 	mux.HandleFunc("GET /games/new", app.gameCreate)
 	mux.HandleFunc("POST /games/new", app.gameCreatePost)
 
-	return mux
+	return commonHeaders(mux)
 }
