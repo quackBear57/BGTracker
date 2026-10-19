@@ -66,19 +66,102 @@ func (app *application) gameCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) gameCreatePost(w http.ResponseWriter, r *http.Request) {
-	title := "Test Game 1"
-	bgg_id := 12345
-	price := 20.99
-	state := "owned"
-	year_pub := 1999
-	description := "test desc"
-	player_min := 1
-	player_max := 99
-	playtime_min := 10
-	playtime_max := 120
-	age_min := 10
-	scoring := true
+	err := r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
 
+	title := r.PostForm.Get("title")
+	// fmt.Printf("title: %s \n", title)
+
+	bgg_id, err := strconv.Atoi(r.PostForm.Get("bgg_id"))
+	if err != nil {
+		app.logger.Error(err.Error())
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+	// fmt.Printf("bgg_id: %d \n", bgg_id)
+
+	year_pub, err := strconv.Atoi(r.PostForm.Get("year_pub"))
+	if err != nil {
+		app.logger.Error(err.Error())
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+	// fmt.Printf("year_pub: %d \n", year_pub)
+
+	description := r.PostForm.Get("description")
+	// fmt.Printf("description: %s \n", description)
+
+	price, err := strconv.ParseFloat(r.PostForm.Get("price"), 64)
+	if err != nil {
+		app.logger.Error(err.Error())
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+	// fmt.Printf("price: %f \n", price)
+
+	player_min, err := strconv.Atoi(r.PostForm.Get("player_min"))
+	if err != nil {
+		app.logger.Error(err.Error())
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+	// fmt.Printf("player_min: %d \n", player_min)
+
+	player_max, err := strconv.Atoi(r.PostForm.Get("player_max"))
+	if err != nil {
+		app.logger.Error(err.Error())
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+	// fmt.Printf("player_max: %d \n", player_max)
+
+	playtime_min, err := strconv.Atoi(r.PostForm.Get("playtime_min"))
+	if err != nil {
+		app.logger.Error(err.Error())
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+	// fmt.Printf("playtime_min: %d \n", playtime_min)
+
+	playtime_max, err := strconv.Atoi(r.PostForm.Get("playtime_max"))
+	if err != nil {
+		app.logger.Error(err.Error())
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+	// fmt.Printf("playtime_max: %d \n", playtime_max)
+
+	age_min, err := strconv.Atoi(r.PostForm.Get("age_min"))
+	if err != nil {
+		app.logger.Error(err.Error())
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+	// fmt.Printf("age_min: %d \n", age_min)
+
+	score_int, err := strconv.Atoi(r.PostForm.Get("scoring"))
+	if err != nil {
+		app.logger.Error(err.Error())
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+	scoring := true
+	if score_int == 1 {
+		scoring = true
+	} else if score_int == 0 {
+		scoring = false
+	} else {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+	// fmt.Printf("scoring: %t \n", scoring)
+
+	state := r.PostForm.Get("state")
+	// fmt.Printf("state: %s \n", state)
+	
 	id, err := app.games.Insert(title, bgg_id, price, state, year_pub,
 	description, player_min, player_max, playtime_min, playtime_max,
 	age_min, scoring)
