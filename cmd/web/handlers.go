@@ -57,7 +57,12 @@ func (app *application) gameView(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) gameCreate(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Page to create a new game..."))
+	data := app.newTemplateData(r)
+
+	err := app.render(w, r, http.StatusOK, "addGame.tmpl.html", data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
 }
 
 func (app *application) gameCreatePost(w http.ResponseWriter, r *http.Request) {
