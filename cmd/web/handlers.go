@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
+	"unicode/utf8"
 
 	"bgtracker.ndr54.com/internal/models"
 )
@@ -72,96 +74,106 @@ func (app *application) gameCreatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	title := r.PostForm.Get("title")
-	// fmt.Printf("title: %s \n", title)
+	fieldErrors := make(map[string]string)
 
-	bgg_id, err := strconv.Atoi(r.PostForm.Get("bgg_id"))
-	if err != nil {
-		app.logger.Error(err.Error())
-		app.clientError(w, http.StatusBadRequest)
-		return
+	title := r.PostForm.Get("title")
+	if strings.TrimSpace(title) == "" {
+		fieldErrors["title"] = "This field cannot be blank"
+	} else if utf8.RuneCountInString(title) > 100 {
+		fieldErrors["title"] = "This field cannot be longer than 100 characters"
 	}
-	// fmt.Printf("bgg_id: %d \n", bgg_id)
+
+	bgg_idValue := r.PostForm.Get("bgg_id")
+	bgg_id := 0
+	if bgg_idValue != "" {
+		bgg_id, err = strconv.Atoi(bgg_idValue)
+			if err != nil {
+			fieldErrors["bgg_id"] = "This field must be an integer"
+		}
+	}
+	
+	// bgg_id, err := strconv.Atoi(r.PostForm.Get("bgg_id"))
+	// if err != nil {
+	// 	fieldErrors["bgg_id"] = "This field must be an integer"
+	// }
 
 	year_pub, err := strconv.Atoi(r.PostForm.Get("year_pub"))
 	if err != nil {
-		app.logger.Error(err.Error())
-		app.clientError(w, http.StatusBadRequest)
-		return
+		fieldErrors["year_pub"] = "This field must be an integer"
 	}
-	// fmt.Printf("year_pub: %d \n", year_pub)
 
 	description := r.PostForm.Get("description")
-	// fmt.Printf("description: %s \n", description)
 
 	price, err := strconv.ParseFloat(r.PostForm.Get("price"), 64)
 	if err != nil {
-		app.logger.Error(err.Error())
-		app.clientError(w, http.StatusBadRequest)
-		return
+		fieldErrors["price"] = "This field must be a number"
 	}
-	// fmt.Printf("price: %f \n", price)
 
 	player_min, err := strconv.Atoi(r.PostForm.Get("player_min"))
 	if err != nil {
-		app.logger.Error(err.Error())
-		app.clientError(w, http.StatusBadRequest)
-		return
+		fieldErrors["player_min"] = "This field must be an integer"
 	}
-	// fmt.Printf("player_min: %d \n", player_min)
 
 	player_max, err := strconv.Atoi(r.PostForm.Get("player_max"))
 	if err != nil {
-		app.logger.Error(err.Error())
-		app.clientError(w, http.StatusBadRequest)
-		return
+		fieldErrors["player_max"] = "This field must be an integer"
 	}
-	// fmt.Printf("player_max: %d \n", player_max)
 
 	playtime_min, err := strconv.Atoi(r.PostForm.Get("playtime_min"))
 	if err != nil {
-		app.logger.Error(err.Error())
-		app.clientError(w, http.StatusBadRequest)
-		return
+		fieldErrors["playtime_min"] = "This field must be an integer"
 	}
-	// fmt.Printf("playtime_min: %d \n", playtime_min)
 
 	playtime_max, err := strconv.Atoi(r.PostForm.Get("playtime_max"))
 	if err != nil {
-		app.logger.Error(err.Error())
-		app.clientError(w, http.StatusBadRequest)
-		return
+		fieldErrors["playtime_max"] = "This field must be an integer"
 	}
-	// fmt.Printf("playtime_max: %d \n", playtime_max)
 
 	age_min, err := strconv.Atoi(r.PostForm.Get("age_min"))
 	if err != nil {
-		app.logger.Error(err.Error())
-		app.clientError(w, http.StatusBadRequest)
-		return
+		fieldErrors["age_min"] = "This field must be an integer"
 	}
-	// fmt.Printf("age_min: %d \n", age_min)
 
-	score_int, err := strconv.Atoi(r.PostForm.Get("scoring"))
-	if err != nil {
-		app.logger.Error(err.Error())
-		app.clientError(w, http.StatusBadRequest)
-		return
+	scoringValue := r.PostForm.Get("scoring")
+	// fmt.Printf("scoring value: %s", scoringValue)
+	scoreSet := map[string]bool{"yes": true, "no": true}
+	if !scoreSet[scoringValue] {
+		fieldErrors["scoring"] = "This field must either be Yes or No"
 	}
 	scoring := true
-	if score_int == 1 {
+	if scoringValue == "yes" {
 		scoring = true
-	} else if score_int == 0 {
+	} else if scoringValue == "no" {
 		scoring = false
-	} else {
-		app.clientError(w, http.StatusBadRequest)
+	}
+
+	// score_int, err := strconv.Atoi(r.PostForm.Get("scoring"))
+	// if err != nil {
+	// 	app.logger.Error(err.Error())
+	// 	app.clientError(w, http.StatusBadRequest)
+	// 	return
+	// }
+	// scoring := true
+	// if score_int == 1 {
+	// 	scoring = true
+	// } else if score_int == 0 {
+	// 	scoring = false
+	// } else {
+	// 	app.clientError(w, http.StatusBadRequest)
+	// 	return
+	// }
+
+	stateSet := map[string]bool{"owned": true, "wanted": true}
+	state := r.PostForm.Get("state")
+	if !stateSet[state] {
+		fieldErrors["state"] = "This field must be either owned or wanted"
+	}
+	
+	if len(fieldErrors) > 0 {
+		fmt.Fprint(w, fieldErrors)
 		return
 	}
-	// fmt.Printf("scoring: %t \n", scoring)
 
-	state := r.PostForm.Get("state")
-	// fmt.Printf("state: %s \n", state)
-	
 	id, err := app.games.Insert(title, bgg_id, price, state, year_pub,
 	description, player_min, player_max, playtime_min, playtime_max,
 	age_min, scoring)
