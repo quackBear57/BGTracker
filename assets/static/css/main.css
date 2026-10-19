@@ -232,42 +232,59 @@ button:hover {
     cursor: pointer;
 }
 
-.snippet {
+div codeSmall, div spanSmall {
+    font-size: 16px;
+}
+
+.game {
     background-color: #FFFFFF;
     border: 1px solid #E4E5E7;
     border-radius: 3px;
 }
 
-.snippet pre {
+.game pre {
     padding: 18px;
-    border-top: 1px solid #E4E5E7;
+    /* border-top: 1px solid #E4E5E7; */
     border-bottom: 1px solid #E4E5E7;
 }
 
-.snippet .metadata {
+.game .minorInfo {
+    padding: 6px 18px;
+    background-color: #F7F9FA;
+    color: #6A6C6F;
+    /* border-top: 1px solid #E4E5E7; */
+    border-bottom: 1px solid #E4E5E7;
+}
+
+.game .minorInfo span, .game .minorInfo spanSmall {
+    float: right;
+}
+
+.game .metadata {
     background-color: #F7F9FA;
     color: #6A6C6F;
     padding: 0.75em 18px;
     overflow: auto;
+    border-bottom: 1px solid #E4E5E7;
 }
 
-.snippet .metadata span {
+.game .metadata span {
     float: right;
 }
 
-.snippet .metadata strong {
+.game .metadata strong {
     color: #34495E;
 }
 
-.snippet .metadata time {
+.game .metadata time {
     display: inline-block;
 }
 
-.snippet .metadata time:first-child {
+.game .metadata time:first-child {
     float: left;
 }
 
-.snippet .metadata time:last-child {
+.game .metadata time:last-child {
     float: right;
 }
 

@@ -4,6 +4,7 @@ import(
 	"html/template"
 	"path/filepath"
 	"time"
+	"strings"
 
 	"bgtracker.ndr54.com/internal/models"
 )
@@ -20,6 +21,7 @@ func humanDate(t time.Time) string {
 
 var functions = template.FuncMap{
 	"humanDate" : humanDate,
+	"toTitle"	: strings.Title,
 }
 
 func newTemplateCache() (map[string]*template.Template, error) {

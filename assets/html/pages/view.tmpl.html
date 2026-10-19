@@ -2,15 +2,30 @@
 
 {{define "main"}}
     {{with .Game}}
-    <div class="snippet">
+    <div class="game">
         <div class="metadata">
-            <strong>{{.Title}}</strong>
+            <strong>{{.Title}} ({{.Year_pub}})</strong>
             <span>#{{.ID}}</span>
         </div>
+        <div class="minorInfo">
+            <codeSmall>Boardgame Geek ID: {{.Bgg_ID}}</codeSmall>
+            <spanSmall>Price: {{.Price}}</spanSmall>
+        </div>
         <pre><code>Description: {{.Description}}</code></pre>
-        <pre><code>Boardgame Geek ID: {{.Bgg_ID}}</code></pre>
-        <pre><code>Price: {{.Price}}</code></pre>
-        <pre><code>State: {{.State}}</code></pre>
+        <div class="minorInfo">
+            <codeSmall>State: {{toTitle .State}}</codeSmall>
+        </div>
+        <div class="minorInfo">
+            <codeSmall>Player Min-Max: {{.Player_min}} - {{.Player_max}}</codeSmall>
+            <!-- <spanSmall>Player Max: {{.Player_max}}</spanSmall> -->
+        </div>
+        <div class="minorInfo">
+            <codeSmall>Playtime Min-Max: {{.Playtime_min}} min - {{.Playtime_max}} min</codeSmall>
+            <!-- <spanSmall>Playtime Max: {{.Playtime_max}}</spanSmall> -->
+        </div>
+        <div class="minorInfo">
+            <codeSmall>Age Min: {{.Age_min}}+</codeSmall>
+        </div>
         <div class="metadata">
             <time>Added: {{humanDate .Added}}</time>
         </div>
