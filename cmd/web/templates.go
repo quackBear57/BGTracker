@@ -13,6 +13,7 @@ type templateData struct {
 	CurrentYear		int
 	Game			models.Game
 	Games			[]models.Game
+	Form			any
 }
 
 func humanDate(t time.Time) string {
