@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 	"unicode/utf8"
+	"time"
 
 	"bgtracker.ndr54.com/internal/models"
 )
@@ -60,6 +61,12 @@ func (app *application) gameView(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) gameCreate(w http.ResponseWriter, r *http.Request) {
 	data := app.newTemplateData(r)
+
+	data.Form = gameCreateForm{
+		Year_pub:	time.Now().Year()
+		Scoring: 	true,
+		State:		"owned",
+	}
 
 	err := app.render(w, r, http.StatusOK, "addGame.tmpl.html", data)
 	if err != nil {
