@@ -67,6 +67,22 @@ func (app *application) gameCreate(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+type gameCreateForm struct {
+	Title			string
+	Bgg_id			int
+	Year_pub		int
+	Description		string
+	Price			float64
+	Player_min		int
+	Player_max		int
+	Playtime_min	int
+	Playtime_max	int
+	Age_min			int
+	Scoring			bool
+	State			string
+	FieldErrors		map[string]string
+}
+
 func (app *application) gameCreatePost(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -74,108 +90,99 @@ func (app *application) gameCreatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fieldErrors := make(map[string]string)
-
-	title := r.PostForm.Get("title")
-	if strings.TrimSpace(title) == "" {
-		fieldErrors["title"] = "This field cannot be blank"
-	} else if utf8.RuneCountInString(title) > 100 {
-		fieldErrors["title"] = "This field cannot be longer than 100 characters"
+	bgg_id, err := strconv.Atoi(r.PostForm.Get("bgg_id"))
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+        return
 	}
-
-	bgg_idValue := r.PostForm.Get("bgg_id")
-	bgg_id := 0
-	if bgg_idValue != "" {
-		bgg_id, err = strconv.Atoi(bgg_idValue)
-			if err != nil {
-			fieldErrors["bgg_id"] = "This field must be an integer"
-		}
-	}
-	
-	// bgg_id, err := strconv.Atoi(r.PostForm.Get("bgg_id"))
-	// if err != nil {
-	// 	fieldErrors["bgg_id"] = "This field must be an integer"
-	// }
 
 	year_pub, err := strconv.Atoi(r.PostForm.Get("year_pub"))
 	if err != nil {
-		fieldErrors["year_pub"] = "This field must be an integer"
+		app.clientError(w, http.StatusBadRequest)
+        return
 	}
-
-	description := r.PostForm.Get("description")
 
 	price, err := strconv.ParseFloat(r.PostForm.Get("price"), 64)
 	if err != nil {
-		fieldErrors["price"] = "This field must be a number"
+		app.clientError(w, http.StatusBadRequest)
+        return
 	}
 
 	player_min, err := strconv.Atoi(r.PostForm.Get("player_min"))
 	if err != nil {
-		fieldErrors["player_min"] = "This field must be an integer"
+		app.clientError(w, http.StatusBadRequest)
+        return
 	}
 
 	player_max, err := strconv.Atoi(r.PostForm.Get("player_max"))
 	if err != nil {
-		fieldErrors["player_max"] = "This field must be an integer"
+		app.clientError(w, http.StatusBadRequest)
+        return
 	}
 
 	playtime_min, err := strconv.Atoi(r.PostForm.Get("playtime_min"))
 	if err != nil {
-		fieldErrors["playtime_min"] = "This field must be an integer"
+		app.clientError(w, http.StatusBadRequest)
+        return
 	}
 
 	playtime_max, err := strconv.Atoi(r.PostForm.Get("playtime_max"))
 	if err != nil {
-		fieldErrors["playtime_max"] = "This field must be an integer"
+		app.clientError(w, http.StatusBadRequest)
+        return
 	}
 
 	age_min, err := strconv.Atoi(r.PostForm.Get("age_min"))
 	if err != nil {
-		fieldErrors["age_min"] = "This field must be an integer"
+		app.clientError(w, http.StatusBadRequest)
+        return
 	}
 
-	scoringValue := r.PostForm.Get("scoring")
-	// fmt.Printf("scoring value: %s", scoringValue)
-	scoreSet := map[string]bool{"yes": true, "no": true}
-	if !scoreSet[scoringValue] {
-		fieldErrors["scoring"] = "This field must either be Yes or No"
-	}
-	scoring := true
-	if scoringValue == "yes" {
+	// Defaults to 'no/false' if it returns blank as well
+	scoring := false
+	if r.PostForm.Get("scoring") == "yes" {
 		scoring = true
-	} else if scoringValue == "no" {
-		scoring = false
 	}
 
-	// score_int, err := strconv.Atoi(r.PostForm.Get("scoring"))
-	// if err != nil {
-	// 	app.logger.Error(err.Error())
-	// 	app.clientError(w, http.StatusBadRequest)
-	// 	return
-	// }
-	// scoring := true
-	// if score_int == 1 {
-	// 	scoring = true
-	// } else if score_int == 0 {
-	// 	scoring = false
-	// } else {
-	// 	app.clientError(w, http.StatusBadRequest)
-	// 	return
-	// }
+	form := gameCreateForm{
+		Title:			r.PostForm.Get("title"),
+		Bgg_id:			bgg_id,
+		Year_pub:		year_pub,
+		Description:	r.PostForm.Get("description"),
+		Price:			price,
+		Player_min:		player_min,
+		Player_max:		player_max,
+		Playtime_min:	playtime_min,
+		Playtime_max:	playtime_max,
+		Age_min:		age_min,
+		Scoring:		scoring,
+		State:			r.PostForm.Get("state"),
+		FieldErrors:	map[string]string{},
+	}
 
-	stateSet := map[string]bool{"owned": true, "wanted": true}
-	state := r.PostForm.Get("state")
-	if !stateSet[state] {
-		fieldErrors["state"] = "This field must be either owned or wanted"
+	if strings.TrimSpace(form.Title) == "" {
+		form.FieldErrors["title"] = "This field cannot be blank"
+	} else if utf8.RuneCountInString(form.Title) > 100 {
+		form.FieldErrors["title"] = "This field cannot be longer than 100 characters"
+	}
+
+	if strings.TrimSpace(form.State) == "" {
+		form.FieldErrors["state"] = "This field must not be blank"
 	}
 	
-	if len(fieldErrors) > 0 {
-		fmt.Fprint(w, fieldErrors)
+	if len(form.FieldErrors) > 0 {
+		data  := app.newTemplateData(r)
+		data.Form = form
+		
+		err := app.render (w, r, http.StatusUnprocessableEntity, "create.tmpl.html", data)
+		if err != nil {
+			app.serverError(w, r, err)
+		}
 		return
 	}
 
-	id, err := app.games.Insert(title, bgg_id, price, state, year_pub,
-	description, player_min, player_max, playtime_min, playtime_max,
+	id, err := app.games.Insert(form.Title, bgg_id, price, form.State, year_pub,
+	form.Description, player_min, player_max, playtime_min, playtime_max,
 	age_min, scoring)
 
 	if err != nil {
