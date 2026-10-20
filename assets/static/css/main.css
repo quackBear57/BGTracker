@@ -92,9 +92,20 @@ header {
     text-align: center;
 }
 
+header div {
+    display: flex;
+    align-items: center;
+}
+
 header a {
     color: #34495E;
     text-decoration: none;
+}
+
+header #dark-mode-toggle {
+    position: absolute;
+    right: 30px;
+    top: 30px;
 }
 
 nav {
