@@ -20,7 +20,7 @@ func (v *Validator) AddFieldError(key, message string) {
 	}
 
 	if _, exists := v.FieldErrors[key]; !exists {
-		v.FieldErrors[key] message
+		v.FieldErrors[key] = message
 	}
 }
 
@@ -31,7 +31,7 @@ func (v *Validator) CheckField(ok bool, key, message string) {
 }
 
 func NotBlank(value string) bool {
-	return  string.TrimSpace(value) != ""
+	return  strings.TrimSpace(value) != ""
 }
 
 func MaxChars(value string, n int) bool {
