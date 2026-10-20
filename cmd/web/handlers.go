@@ -12,6 +12,22 @@ import (
 	"bgtracker.ndr54.com/internal/models"
 )
 
+type gameCreateForm struct {
+	Title			string
+	Bgg_id			int
+	Year_pub		int
+	Description		string
+	Price			float64
+	Player_min		int
+	Player_max		int
+	Playtime_min	int
+	Playtime_max	int
+	Age_min			int
+	Scoring			bool
+	State			string
+	FieldErrors		map[string]string
+}
+
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	games, err := app.games.Latest()
 	if err != nil {
@@ -63,7 +79,7 @@ func (app *application) gameCreate(w http.ResponseWriter, r *http.Request) {
 	data := app.newTemplateData(r)
 
 	data.Form = gameCreateForm{
-		Year_pub:	time.Now().Year()
+		Year_pub:	time.Now().Year(),
 		Scoring: 	true,
 		State:		"owned",
 	}
@@ -72,22 +88,6 @@ func (app *application) gameCreate(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		app.serverError(w, r, err)
 	}
-}
-
-type gameCreateForm struct {
-	Title			string
-	Bgg_id			int
-	Year_pub		int
-	Description		string
-	Price			float64
-	Player_min		int
-	Player_max		int
-	Playtime_min	int
-	Playtime_max	int
-	Age_min			int
-	Scoring			bool
-	State			string
-	FieldErrors		map[string]string
 }
 
 func (app *application) gameCreatePost(w http.ResponseWriter, r *http.Request) {
@@ -181,7 +181,7 @@ func (app *application) gameCreatePost(w http.ResponseWriter, r *http.Request) {
 		data  := app.newTemplateData(r)
 		data.Form = form
 		
-		err := app.render (w, r, http.StatusUnprocessableEntity, "create.tmpl.html", data)
+		err := app.render (w, r, http.StatusUnprocessableEntity, "addGame.tmpl.html", data)
 		if err != nil {
 			app.serverError(w, r, err)
 		}
