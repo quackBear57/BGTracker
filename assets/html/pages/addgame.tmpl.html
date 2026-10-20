@@ -57,10 +57,17 @@
         {{with .Form.FieldErrors.state}}
             <label class="error">{{.}}</label>
         {{end}}
-        <input type="radio" name="state" id="owned" value="owned" {{if (eq .Form.State owned)}}checked{{end}}">
+        {{if (eq .Form.State "wanted")}}
+        <input type="radio" name="state" id="owned" value="owned">
         <label for="owned">Owned</label>
-        <input type="radio" name="state" id="wanted" value="wanted" {{if (eq .Form.State wanted)}}checked{{end}}>
+        <input type="radio" name="state" id="wanted" value="wanted" checked="checked">
         <label for="wanted">Wanted</label>
+        {{else}}
+        <input type="radio" name="state" id="owned" value="owned" checked="checked">
+        <label for="owned">Owned</label>
+        <input type="radio" name="state" id="wanted" value="wanted">
+        <label for="wanted">Wanted</label>
+        {{end}}
     </div>
     <div>
         <input type="submit" value="Add Game">
