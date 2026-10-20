@@ -5,11 +5,10 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"strings"
-	"unicode/utf8"
 	"time"
 
 	"bgtracker.ndr54.com/internal/models"
+	"bgtracker.ndr54.com/internal/validator"
 )
 
 type gameCreateForm struct {
@@ -25,7 +24,7 @@ type gameCreateForm struct {
 	Age_min			int
 	Scoring			bool
 	State			string
-	FieldErrors		map[string]string
+	validator.Validator
 }
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
@@ -164,20 +163,16 @@ func (app *application) gameCreatePost(w http.ResponseWriter, r *http.Request) {
 		Age_min:		age_min,
 		Scoring:		scoring,
 		State:			r.PostForm.Get("state"),
-		FieldErrors:	map[string]string{},
 	}
 
-	if strings.TrimSpace(form.Title) == "" {
-		form.FieldErrors["title"] = "This field cannot be blank"
-	} else if utf8.RuneCountInString(form.Title) > 100 {
-		form.FieldErrors["title"] = "This field cannot be longer than 100 characters"
-	}
+	form.CheckField(validator.NotBlank(form.Title), "title", "This field cannot be blank")
+	form.CheckField(validator.MaxChars(form.Title, 100), "title", "This field cannot be longer than 100 characters")
+	form.CheckField(validator.PermittedValue(form.State, "owned", "wanted"), "state", "This field must be either owned or wanted")
+	// Add check for scoring?
+	// Add sensible checks for other fields (published player and time min < max)
 
-	if strings.TrimSpace(form.State) == "" {
-		form.FieldErrors["state"] = "This field must not be blank"
-	}
-	
-	if len(form.FieldErrors) > 0 {
+
+	if !form.Valid() {
 		data  := app.newTemplateData(r)
 		data.Form = form
 		
