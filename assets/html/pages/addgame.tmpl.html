@@ -4,43 +4,46 @@
 <form aciton="/game/new" method="POST">
     <div>
         <label>Title:</label>
-        <input type="text" name="title">
+        {{with .Form.FieldErrors.title}}
+            <label class="error">{{.}}</label>
+        {{end}}
+        <input type="text" name="title" value="{{.Form.Title}}">
     </div>
     <div>
         <label>BoardGameGeek ID:</label>
-        <input type="text" name="bgg_id">
+        <input type="text" name="bgg_id" value="{{.Form.Bgg_id}}">
     </div>
     <div>
         <label>Year Published:</label>
-        <input type="number" name="year_pub" min="1500" max="3000" step="1" value="{{.CurrentYear}}">
+        <input type="number" name="year_pub" min="1500" max="3000" step="1" value="{{.Form.Year_pub}}">
     </div>
     <div>
         <label>Description:</label>
-        <textarea name="description"></textarea>
+        <textarea name="description">{{.Form.Description}}</textarea>
     </div>
     <div>
         <label>Price:</label>
-        <input type="number" name="price" min="0" max="9999" step="0.01">
+        <input type="number" name="price" min="0" max="9999" step="0.01" value="{{.Form.Price}}">
     </div>
     <div>
         <label>Player Minimum:</label>
-        <input type="number" name="player_min" min="0" max="999" step="1" value="0">
+        <input type="number" name="player_min" min="0" max="999" step="1" value="{{.Form.Player_min}}">
     </div>
     <div>
         <label>Player Maximum:</label>
-        <input type="number" name="player_max" min="0" max="999" step="1" value="0">
+        <input type="number" name="player_max" min="0" max="999" step="1" value="{{.Form.Player_max}}">
     </div>
     <div>
         <label>Playtime Minimum (minutes):</label>
-        <input type="number" name="playtime_min" min="0" max="999" step="1">
+        <input type="number" name="playtime_min" min="0" max="999" step="1" value="{{.Form.Playtime_min}}">
     </div>
     <div>
         <label>Playtime Maximum (minutes):</label>
-        <input type="number" name="playtime_max" min="0" max="999" step="1">
+        <input type="number" name="playtime_max" min="0" max="999" step="1" value="{{.Form.Playtime_max}}">
     </div>
     <div>
         <label>Age Minimum (years):</label>
-        <input type="number" name="age_min" min="0" max="199" step="1">
+        <input type="number" name="age_min" min="0" max="199" step="1" value="{{.Form.Age_min}}">
     </div>
     <div>
         <label>Has Scoring:</label>
@@ -51,6 +54,9 @@
     </div>
     <div>
         <label>State:</label>
+        {{with .Form.FieldErrors.state}}
+            <label class="error">{{.}}</label>
+        {{end}}
         <input type="radio" name="state" id="owned" value="owned" checked="checked">
         <label for="owned">Owned</label>
         <input type="radio" name="state" id="wanted" value="wanted">
