@@ -47,9 +47,9 @@
     </div>
     <div>
         <label>Has Scoring:</label>
-        <input type="radio" name="scoring" id="scoring_true" value="yes" checked="checked">
+        <input type="radio" name="scoring" id="scoring_true" value="yes" {{if (eq .Form.Scoring true)}}checked{{end}}>
         <label for="scoring_true">Yes</label>
-        <input type="radio" name="scoring" id="scoring_false" value="no">
+        <input type="radio" name="scoring" id="scoring_false" value="no" {{if (eq .Form.Scoring false)}}checked{{end}}>
         <label for="scoring_false">No</label>
     </div>
     <div>
@@ -57,9 +57,9 @@
         {{with .Form.FieldErrors.state}}
             <label class="error">{{.}}</label>
         {{end}}
-        <input type="radio" name="state" id="owned" value="owned" checked="checked">
+        <input type="radio" name="state" id="owned" value="owned" {{if (eq .Form.State owned)}}checked{{end}}">
         <label for="owned">Owned</label>
-        <input type="radio" name="state" id="wanted" value="wanted">
+        <input type="radio" name="state" id="wanted" value="wanted" {{if (eq .Form.State wanted)}}checked{{end}}>
         <label for="wanted">Wanted</label>
     </div>
     <div>
