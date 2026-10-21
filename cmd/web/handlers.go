@@ -12,19 +12,19 @@ import (
 )
 
 type gameCreateForm struct {
-	Title			string
-	Bgg_id			int
-	Year_pub		int
-	Description		string
-	Price			float64
-	Player_min		int
-	Player_max		int
-	Playtime_min	int
-	Playtime_max	int
-	Age_min			int
-	Scoring			bool
-	State			string
-	validator.Validator
+	Title					string `form:"title"`
+	Bgg_id					int `form:"bgg_id"`
+	Year_pub				int `form:"year_pub"`
+	Description				string	`form:"description"`
+	Price					float64 `form:"price"`
+	Player_min				int `form:"player_min"`
+	Player_max				int `form:"player_max"`
+	Playtime_min			int `form:"playtime_min"`
+	Playtime_max			int `form:"playtime_max"`
+	Age_min					int `form:"age_min"`
+	Scoring					bool `form:"scoring"`
+	State					string `form:"state"`
+	validator.Validator		`form:"-"`
 }
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
@@ -90,80 +90,88 @@ func (app *application) gameCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) gameCreatePost(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
+	var form gameCreateForm
+
+	err := app.decodePostForm(r, &form)
 	if err != nil {
 		app.clientError(w, http.StatusBadRequest)
 		return
 	}
 
-	bgg_id, err := strconv.Atoi(r.PostForm.Get("bgg_id"))
-	if err != nil {
-		app.clientError(w, http.StatusBadRequest)
-        return
-	}
+	// err := app.formDecoder.Decode(&form, r.PostForm)
+	// if err !=  nil {
+	// 	app.clientError(w, http.StatusBadRequest)
+	// 	return
+	// }
 
-	year_pub, err := strconv.Atoi(r.PostForm.Get("year_pub"))
-	if err != nil {
-		app.clientError(w, http.StatusBadRequest)
-        return
-	}
+	// bgg_id, err := strconv.Atoi(r.PostForm.Get("bgg_id"))
+	// if err != nil {
+	// 	app.clientError(w, http.StatusBadRequest)
+    //     return
+	// }
 
-	price, err := strconv.ParseFloat(r.PostForm.Get("price"), 64)
-	if err != nil {
-		app.clientError(w, http.StatusBadRequest)
-        return
-	}
+	// year_pub, err := strconv.Atoi(r.PostForm.Get("year_pub"))
+	// if err != nil {
+	// 	app.clientError(w, http.StatusBadRequest)
+    //     return
+	// }
 
-	player_min, err := strconv.Atoi(r.PostForm.Get("player_min"))
-	if err != nil {
-		app.clientError(w, http.StatusBadRequest)
-        return
-	}
+	// price, err := strconv.ParseFloat(r.PostForm.Get("price"), 64)
+	// if err != nil {
+	// 	app.clientError(w, http.StatusBadRequest)
+    //     return
+	// }
 
-	player_max, err := strconv.Atoi(r.PostForm.Get("player_max"))
-	if err != nil {
-		app.clientError(w, http.StatusBadRequest)
-        return
-	}
+	// player_min, err := strconv.Atoi(r.PostForm.Get("player_min"))
+	// if err != nil {
+	// 	app.clientError(w, http.StatusBadRequest)
+    //     return
+	// }
 
-	playtime_min, err := strconv.Atoi(r.PostForm.Get("playtime_min"))
-	if err != nil {
-		app.clientError(w, http.StatusBadRequest)
-        return
-	}
+	// player_max, err := strconv.Atoi(r.PostForm.Get("player_max"))
+	// if err != nil {
+	// 	app.clientError(w, http.StatusBadRequest)
+    //     return
+	// }
 
-	playtime_max, err := strconv.Atoi(r.PostForm.Get("playtime_max"))
-	if err != nil {
-		app.clientError(w, http.StatusBadRequest)
-        return
-	}
+	// playtime_min, err := strconv.Atoi(r.PostForm.Get("playtime_min"))
+	// if err != nil {
+	// 	app.clientError(w, http.StatusBadRequest)
+    //     return
+	// }
 
-	age_min, err := strconv.Atoi(r.PostForm.Get("age_min"))
-	if err != nil {
-		app.clientError(w, http.StatusBadRequest)
-        return
-	}
+	// playtime_max, err := strconv.Atoi(r.PostForm.Get("playtime_max"))
+	// if err != nil {
+	// 	app.clientError(w, http.StatusBadRequest)
+    //     return
+	// }
 
-	// Defaults to 'no/false' if it returns blank as well
-	scoring := false
-	if r.PostForm.Get("scoring") == "yes" {
-		scoring = true
-	}
+	// age_min, err := strconv.Atoi(r.PostForm.Get("age_min"))
+	// if err != nil {
+	// 	app.clientError(w, http.StatusBadRequest)
+    //     return
+	// }
 
-	form := gameCreateForm{
-		Title:			r.PostForm.Get("title"),
-		Bgg_id:			bgg_id,
-		Year_pub:		year_pub,
-		Description:	r.PostForm.Get("description"),
-		Price:			price,
-		Player_min:		player_min,
-		Player_max:		player_max,
-		Playtime_min:	playtime_min,
-		Playtime_max:	playtime_max,
-		Age_min:		age_min,
-		Scoring:		scoring,
-		State:			r.PostForm.Get("state"),
-	}
+	// // Defaults to 'no/false' if it returns blank as well
+	// scoring := false
+	// if r.PostForm.Get("scoring") == "yes" {
+	// 	scoring = true
+	// }
+
+	// form := gameCreateForm{
+	// 	Title:			r.PostForm.Get("title"),
+	// 	Bgg_id:			bgg_id,
+	// 	Year_pub:		year_pub,
+	// 	Description:	r.PostForm.Get("description"),
+	// 	Price:			price,
+	// 	Player_min:		player_min,
+	// 	Player_max:		player_max,
+	// 	Playtime_min:	playtime_min,
+	// 	Playtime_max:	playtime_max,
+	// 	Age_min:		age_min,
+	// 	Scoring:		scoring,
+	// 	State:			r.PostForm.Get("state"),
+	// }
 
 	form.CheckField(validator.NotBlank(form.Title), "title", "This field cannot be blank")
 	form.CheckField(validator.MaxChars(form.Title, 100), "title", "This field cannot be longer than 100 characters")
@@ -183,9 +191,10 @@ func (app *application) gameCreatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := app.games.Insert(form.Title, bgg_id, price, form.State, year_pub,
-	form.Description, player_min, player_max, playtime_min, playtime_max,
-	age_min, scoring)
+	id, err := app.games.Insert(form.Title, form.Bgg_id, form.Price,
+		form.State, form.Year_pub, form.Description, form.Player_min,
+		form.Player_max, form.Playtime_min, form.Playtime_max, form.Age_min,
+		form.Scoring)
 
 	if err != nil {
 		app.serverError(w, r, err)

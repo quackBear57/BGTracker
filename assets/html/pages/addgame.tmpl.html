@@ -47,9 +47,9 @@
     </div>
     <div>
         <label>Has Scoring:</label>
-        <input type="radio" name="scoring" id="scoring_true" value="yes" {{if (eq .Form.Scoring true)}}checked{{end}}>
+        <input type="radio" name="scoring" id="scoring_true" value="true" {{if (eq .Form.Scoring true)}}checked{{end}}>
         <label for="scoring_true">Yes</label>
-        <input type="radio" name="scoring" id="scoring_false" value="no" {{if (eq .Form.Scoring false)}}checked{{end}}>
+        <input type="radio" name="scoring" id="scoring_false" value="false" {{if (eq .Form.Scoring false)}}checked{{end}}>
         <label for="scoring_false">No</label>
     </div>
     <div>
