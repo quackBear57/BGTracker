@@ -1,0 +1,39 @@
+name: Build and publish Docker image
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    # `docker` label = job pod with a dind sidecar (ubuntu-latest has no Docker daemon).
+    runs-on: docker
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          IMAGE="forgejo-http:3000/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')"
+          docker build -t "$IMAGE:sha-${GITHUB_SHA::7}" .
+
+      - name: Push
+        if: github.event_name != 'pull_request'
+        run: |
+          IMAGE="forgejo-http:3000/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')"
+          # In-cluster registry is plain HTTP; write credentials directly to avoid the token
+          # realm mismatch between git.gddnet.io and forgejo-http:3000.
+          AUTH=$(printf '%s:%s' "${{ github.actor }}" "${{ secrets.REGISTRY_TOKEN }}" | base64 | tr -d '\n')
+          mkdir -p ~/.docker
+          echo "{\"auths\":{\"forgejo-http:3000\":{\"auth\":\"${AUTH}\"}}}" > ~/.docker/config.json
+
+          if [ "${GITHUB_REF}" = "refs/heads/main" ]; then
+            docker tag "$IMAGE:sha-${GITHUB_SHA::7}" "$IMAGE:latest"
+          fi
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            docker tag "$IMAGE:sha-${GITHUB_SHA::7}" "$IMAGE:${GITHUB_REF_NAME#v}"
+          fi
+          docker push --all-tags "$IMAGE"
