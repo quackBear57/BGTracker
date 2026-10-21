@@ -10,6 +10,8 @@ import (
 
 	"bgtracker.ndr54.com/internal/models"
 
+	"github.com/go-playground/form/v4"
+
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -17,6 +19,7 @@ type application struct {
 	logger				*slog.Logger
 	games				*models.GameModel
 	templateCache		map[string]*template.Template
+	formDecoder			*form.Decoder
 }
 
 func main() {
@@ -44,10 +47,13 @@ func main() {
 		os.Exit(1)
 	}
 
+	formDecoder := form.NewDecoder()
+
 	app := &application{
-		logger: logger,
-		games: &models.GameModel{DB: db},
-		templateCache: templateCache,
+		logger:				logger,
+		games:				&models.GameModel{DB: db},
+		templateCache:		templateCache,
+		formDecoder:		formDecoder,
 	}
 
 	logger.Info("starting server", slog.String("addr", *addr))
