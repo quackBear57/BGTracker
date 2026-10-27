@@ -66,8 +66,12 @@ func main() {
 	}
 
 	srv := &http.Server{
-		Addr:		*addr,
-		Handler:	app.routes(),
+		Addr:			*addr,
+		Handler:		app.routes(),
+		ErrorLog:		slog.NewLogLogger(logger.Handler(), slog.LevelError),
+		IdleTimeout:	time.Minute,
+		ReadTimeout:	time.Second * 5,
+		WriteTimeout:	time.Second * 10,
 	}
 
 	logger.Info("starting server", slog.String("addr", *addr))
