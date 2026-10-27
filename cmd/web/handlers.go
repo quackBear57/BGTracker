@@ -65,12 +65,8 @@ func (app *application) gameView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	flash := app.sessionManager.PopString(r.Context(), "flash")
-
 	data := app.newTemplateData(r)
 	data.Game = game
-
-	data.Flash = flash
 
 	err = app.render(w, r, http.StatusOK, "view.tmpl.html", data)
 	if err != nil {
