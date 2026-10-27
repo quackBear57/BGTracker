@@ -14,6 +14,7 @@ type templateData struct {
 	Game			models.Game
 	Games			[]models.Game
 	Form			any
+	Flash			string
 }
 
 func humanDate(t time.Time) string {

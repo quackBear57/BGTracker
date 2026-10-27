@@ -65,8 +65,12 @@ func (app *application) gameView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	flash := app.sessionManager.PopString(r.Context(), "flash")
+
 	data := app.newTemplateData(r)
 	data.Game = game
+
+	data.Flash = flash
 
 	err = app.render(w, r, http.StatusOK, "view.tmpl.html", data)
 	if err != nil {
@@ -125,6 +129,8 @@ func (app *application) gameCreatePost(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, r, err)
 		return
 	}
+
+	app.sessionManager.Put(r.Context(), "flash", "Game added successfully!")
 
 	http.Redirect(w, r, fmt.Sprintf("/games/%d", id), http.StatusSeeOther)
 }
