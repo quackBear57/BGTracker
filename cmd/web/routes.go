@@ -12,11 +12,13 @@ func (app *application) routes() http.Handler {
 	fileServer := http.FileServer(http.Dir("./assets/static/"))
 	mux.Handle("GET /static/", http.StripPrefix("/static", fileServer))
 
-	mux.HandleFunc("GET /", app.home)
-	mux.HandleFunc("GET /games", app.gamesView)
-	mux.HandleFunc("GET /games/{id}", app.gameView)
-	mux.HandleFunc("GET /games/new", app.gameCreate)
-	mux.HandleFunc("POST /games/new", app.gameCreatePost)
+	dynamic := alice.New(app.sessionManager.LoadAndSave)
+
+	mux.Handle("GET /", dynamic.ThenFunc(app.home))
+	mux.Handle("GET /games", dynamic.ThenFunc(app.gamesView))
+	mux.Handle("GET /games/{id}", dynamic.ThenFunc(app.gameView))
+	mux.Handle("GET /games/new", dynamic.ThenFunc(app.gameCreate))
+	mux.Handle("POST /games/new", dynamic.ThenFunc(app.gameCreatePost))
 
 	standard := alice.New(app.recoverPanic, app.logRequest, commonHeaders)
 	return standard.Then(mux)
