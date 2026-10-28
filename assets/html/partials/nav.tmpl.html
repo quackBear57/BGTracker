@@ -2,12 +2,12 @@
  <nav>
     <div>
         <a href='/'>Home</a>
-        {{if .IsAuthenticad}}
+        {{if .IsAuthenticated}}
             <a href="/games/new">Add Game</a>
         {{end}}
     </div>
     <div>
-        {{if .IsAuthenticad}}
+        {{if .IsAuthenticated}}
             <form action="/user/logout" method="POST">
                 <button>Logout</button>
             </form>
