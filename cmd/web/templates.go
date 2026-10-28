@@ -15,7 +15,7 @@ type templateData struct {
 	Games				[]models.Game
 	Form				any
 	Flash				string
-	isAuthenticated		bool
+	IsAuthenticated		bool
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
