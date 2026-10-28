@@ -75,7 +75,7 @@ func (app *application) requireAuthentication(next http.Handler) http.Handler {
 }
 
 func preventCSRF(next http.Handler) http.Handler {
-	csrfHandler := nosurt.New(next)
+	csrfHandler := nosurf.New(next)
 	csrfHandler.SetBaseCookie(http.Cookie{
 		HttpOnly:	true,
 		Path:		"/",
