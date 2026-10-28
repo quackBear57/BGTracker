@@ -34,6 +34,14 @@ type userSignupForm struct {
 	validator.Validator		`form:"-"`
 }
 
+type userLoginForm struct {
+	Email					string `form:"email"`
+	Password				string `form:"password"`
+	validator.Validator		`form:"-"`
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	games, err := app.games.Latest()
 	if err != nil {
@@ -208,7 +216,13 @@ func (app *application) userSignupPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) userLogin(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Form to login")
+	data := app.newTemplateData(r)
+	data.Form = userLoginForm{}
+
+	err := app.render(w, r, http.StatusOK, "login.tmpl.html", data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
 }
 
 func (app *application) userLoginPost(w http.ResponseWriter, r *http.Request) {
