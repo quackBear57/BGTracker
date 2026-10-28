@@ -1,7 +1,7 @@
 package validator
 
 import (
-	"regex"
+	"regexp"
 	"slices"
 	"strings"
 	"unicode/utf8"
