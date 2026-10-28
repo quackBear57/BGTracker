@@ -149,7 +149,40 @@ func (app *application) userSignup(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) userSignupPost(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Create a new user")
+	var form userSignupForm
+	
+	err := app.decodePostForm(r, &form)
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	form.CheckField(validator.NotBlank(form.Name), "name",
+		"This field cannot be blank")
+	form.CheckField(validator.NotBlank(form.Email), "email",
+		"This field cannot be blank")
+	form.CheckField(validator.Matches(form.Email, validator.EmailRX), "email",
+		"This field must be a valid email")
+	form.CheckField(validator.NotBlank(form.Password), "password",
+		"This field cannot be blank")
+	form.CheckField(validator.MinChars(form.Password, 8), "password",
+		"This field must be at least 8 characters long")
+	form.CheckField(validator.MaxBytes(form.Password, 72), "password",
+		"This field must not be more than 72 bytes long")
+
+	if !form.Valid() {
+		data := app.newTemplateData(r)
+		data.Form = form
+		
+		err := app.render(w, r, http.StatusUnprocessableEntity,
+			"signup.tmpl.html", data)
+		if err != nil {
+			app.serverError(w,r, err)
+		}
+		return
+	}
+
+	fmt.Fprintln(w, "Create a new user....")
 }
 
 func (app *application) userLogin(w http.ResponseWriter, r *http.Request) {
