@@ -10,12 +10,15 @@ import(
 )
 
 type templateData struct {
-	CurrentYear		int
-	Game			models.Game
-	Games			[]models.Game
-	Form			any
-	Flash			string
+	CurrentYear			int
+	Game				models.Game
+	Games				[]models.Game
+	Form				any
+	Flash				string
+	isAuthenticated		bool
 }
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 func humanDate(t time.Time) string {
 	return t.Format("02 Jan 2006 at 15:04")
