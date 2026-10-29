@@ -93,6 +93,7 @@ func (m *UserModel) Get(id int) (User, error) {
 	row := m.DB.QueryRow(stmt, id)
 
 	var u User
+	u.ID = id
 
 	err := row.Scan(&u.Name, &u.Email, &u.Created)
 
