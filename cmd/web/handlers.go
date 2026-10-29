@@ -301,5 +301,29 @@ func (app *application) userLogoutPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) accountView(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "view account page")
+	id := app.sessionManager.GetInt(r.Context(), "authenticatedUserID")
+
+	if id < 1 {
+		http.NotFound(w,r)
+		return
+	}
+
+	user, err := app.users.Get(id)
+	if err != nil {
+		switch {
+		case errors.Is(err, models.ErrNoRecord):
+			http.NotFound(w, r)
+		default:
+			app.serverError(w, r, err)
+		}
+		return
+	}
+	
+	data := app.newTemplateData(r)
+	data.User = user
+
+	err = app.render(w, r, http.StatusOK, "accountView.tmpl.html", data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
 }
