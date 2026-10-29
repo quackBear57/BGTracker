@@ -352,5 +352,127 @@ func (app *application) changePass(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) changePassPost(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Process change pass request")
+	var form userChangePasswordForm
+
+	err := app.decodePostForm(r, &form)
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	form.CheckField(validator.NotBlank(form.CurrentPassword), "currentPassword",
+		"This field cannot be blank")
+	form.CheckField(validator.NotBlank(form.NewPassword), "newPassword",
+		"This field cannot be blank")
+		form.CheckField(validator.NotBlank(form.NewPasswordConfirm), "newPasswordConfirm",
+		"This field cannot be blank")
+	form.CheckField(validator.MinChars(form.NewPassword, 8), "newPassword",
+		"This field must be at least 8 characters long")
+	form.CheckField(validator.MinChars(form.NewPasswordConfirm, 8), "newPasswordConfirm",
+		"This field must be at least 8 characters long")
+	form.CheckField(validator.MaxBytes(form.NewPassword, 72), "newPassword",
+		"This field must not be more than 72 bytes long")
+	form.CheckField(validator.MaxBytes(form.NewPasswordConfirm, 72), "newPasswordConfirm",
+		"This field must not be more than 72 bytes long")
+	form.CheckField(validator.StringMatch(form.NewPassword, form.NewPasswordConfirm),
+		"newPassword", "New passwords must match")
+
+	if !form.Valid() {
+		data := app.newTemplateData(r)
+		data.Form = form
+		
+		err := app.render(w, r, http.StatusUnprocessableEntity,
+			"changePassword.tmpl.html", data)
+		if err != nil {
+			app.serverError(w,r, err)
+		}
+		return
+	}
+
+	id := app.sessionManager.GetInt(r.Context(), "authenticatedUserID")
+
+	user, err := app.users.Get(id)
+	if err != nil {
+		switch {
+		case errors.Is(err, models.ErrNoRecord):
+			http.NotFound(w, r)
+		default:
+			app.serverError(w, r, err)
+		}
+		return
+	}
+
+	id, err = app.users.Authenticate(user.Email, form.CurrentPassword)
+	if err != nil {
+		switch {
+		case errors.Is(err, models.ErrInvalidCredentials):
+			form.AddNonFieldError("Password is incorrect")
+			data := app.newTemplateData(r)
+			data.Form = form
+
+			err := app.render(w, r, http.StatusUnprocessableEntity,
+				"changePassword.tmpl.html", data)
+			if err != nil {
+				app.serverError(w, r, err)
+			}
+		default:
+			app.serverError(w, r, err)
+		}
+		return
+	}
+
+	ok, err := app.users.ChangePassword(id, form.CurrentPassword, form.NewPassword)
+	if err != nil {
+		switch {
+		case errors.Is(err, models.ErrInvalidCredentials):
+			form.AddNonFieldError("Password is incorrect")
+			data := app.newTemplateData(r)
+			data.Form = form
+
+			err := app.render(w, r, http.StatusUnprocessableEntity,
+				"changePassword.tmpl.html", data)
+			if err != nil {
+				app.serverError(w, r, err)
+			}
+		case errors.Is(err, models.ErrNoUser):
+			form.AddNonFieldError("Could not find user")
+			data := app.newTemplateData(r)
+			data.Form = form
+
+			err := app.render(w, r, http.StatusUnprocessableEntity,
+				"changePassword.tmpl.html", data)
+			if err != nil {
+				app.serverError(w, r, err)
+			}
+		default:
+			app.serverError(w, r, err)
+		}
+	}
+
+	if !ok {
+		form.AddNonFieldError("Unknown error")
+		data := app.newTemplateData(r)
+		data.Form = form
+	
+		err := app.render(w, r, http.StatusUnprocessableEntity,
+			"changePassword.tmpl.html", data)
+		if err != nil {
+			app.serverError(w, r, err)
+		}
+	}
+
+	err = app.sessionManager.RenewToken(r.Context())
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	app.sessionManager.Put(r.Context(), "flash",
+		"Password changed successfully!")
+
+	app.sessionManager.Put(r.Context(), "flash", "Password changed successfully!")
+	
+	http.Redirect(w, r, "/user/account", http.StatusSeeOther)
+
+	
 }
