@@ -3,14 +3,15 @@ package main
 import (
 	"net/http"
 
+	"bgtracker.ndr54.com/assets"
+
 	"github.com/justinas/alice"
 )
 
 func (app *application) routes() http.Handler {
 	mux := http.NewServeMux()
 
-	fileServer := http.FileServer(http.Dir("./assets/static/"))
-	mux.Handle("GET /static/", http.StripPrefix("/static", fileServer))
+	mux.Handle("GET /static/", http.FileServerFS(assets.Files))
 
 	// for unprotected routes (non-authenticated users)
 	dynamic := alice.New(app.sessionManager.LoadAndSave, preventCSRF,
