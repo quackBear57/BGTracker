@@ -40,6 +40,13 @@ type userLoginForm struct {
 	validator.Validator		`form:"-"`
 }
 
+type userChangePasswordForm struct {
+	CurrentPassword			string `form:"currentPassword"`
+	NewPassword				string `form:"newPassword"`
+	NewPasswordConfirm		string `form:"newPasswordConfirm"`
+	validator.Validator		`form:"-"`
+}
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
@@ -335,7 +342,13 @@ func (app *application) accountView(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) changePass(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Show form to change pass")
+	data := app.newTemplateData(r)
+	data.Form = userChangePasswordForm{}
+	
+	err := app.render(w, r, http.StatusOK, "changePassword.tmpl.html", data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
 }
 
 func (app *application) changePassPost(w http.ResponseWriter, r *http.Request) {
