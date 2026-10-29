@@ -1,0 +1,19 @@
+{{define "title"}}Game #{{.Game.ID}}{{end}}
+
+{{define "main"}}
+    {{with .User}}
+    <div class="game">
+        <div class="metadata">
+            <strong>{{.Name}}</strong>
+        </div>
+        <div class="minorInfo">
+            <codeSmall>Email:</codeSmall>
+            <spanSmall>{{.Email}}</spanSmall>
+        </div>
+        <div class="minorInfo">
+            <codeSmall>Created:</codeSmall>
+            <spanSmall>{{humanDate .Created}}</spanSmall>
+        </div>
+    </div>
+    {{end}}
+{{end}}
