@@ -83,7 +83,7 @@ func (app *application) gameView(w http.ResponseWriter, r *http.Request) {
 	data := app.newTemplateData(r)
 	data.Game = game
 
-	err = app.render(w, r, http.StatusOK, "view.tmpl.html", data)
+	err = app.render(w, r, http.StatusOK, "gameView.tmpl.html", data)
 	if err != nil {
 		app.serverError(w, r, err)
 	}
