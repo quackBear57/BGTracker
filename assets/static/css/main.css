@@ -299,6 +299,11 @@ div codeSmall, div spanSmall {
     float: right;
 }
 
+.minorInfo a {
+    font-size: 16px;
+    color: #6767D6;
+}
+
 div.flash {
     color: #FFFFFF;
     font-weight: bold;
