@@ -1,7 +1,7 @@
 {{define "title"}}Add a New Game{{end}}
 
 {{define "main"}}
-<form aciton="/game/new" method="POST">
+<form aciton="/games/new" method="POST">
     <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
     <div>
         <label>Title:</label>
