@@ -333,3 +333,11 @@ func (app *application) accountView(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, r, err)
 	}
 }
+
+func (app *application) changePass(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Show form to change pass")
+}
+
+func (app *application) changePassPost(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Process change pass request")
+}
