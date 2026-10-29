@@ -13,6 +13,7 @@ import(
 
 type templateData struct {
 	CurrentYear			int
+	User				models.User
 	Game				models.Game
 	Games				[]models.Game
 	Form				any
