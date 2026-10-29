@@ -299,3 +299,7 @@ func (app *application) userLogoutPost(w http.ResponseWriter, r *http.Request) {
 	
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
+
+func (app *application) accountView(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "view account page")
+}
