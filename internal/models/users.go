@@ -106,5 +106,4 @@ func (m *UserModel) Get(id int) (User, error) {
 	}
 
 	return u, nil
-
 }
