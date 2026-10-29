@@ -19,6 +19,7 @@ import (
 )
 
 type application struct {
+	debug				bool
 	logger				*slog.Logger
 	games				*models.GameModel
 	users				*models.UserModel
@@ -28,10 +29,11 @@ type application struct {
 }
 
 func main() {
-	addr := flag.String("addr", ":4000", "HTTP network address")
-	dsn:= flag.String("dsn",
+	addr := flag.String("addr", ":4000", "HTTP network port")
+	dsn := flag.String("dsn",
 	"bgtracker_ur:spree-sculpture-commuting@tcp(192.168.0.3:3306)/bgtracker?parseTime=true",
 	"data source name")
+	debug := flag.Bool("debug", false, "Enable debug logs")
 	flag.Parse()
 
 	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
@@ -59,6 +61,7 @@ func main() {
 	sessionManager.Lifetime = 12 * time.Hour
 
 	app := &application{
+		debug:				*debug,
 		logger:				logger,
 		games:				&models.GameModel{DB: db},
 		users:				&models.UserModel{DB: db},
