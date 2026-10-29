@@ -56,7 +56,7 @@ func PermittedValue[T comparable](value T, permittedValues ...T) bool {
 }
 
 func StringMatch(value1 string, value2 string) bool {
-	return strings.Compare(value1, value2) == 0
+	return strings.Compare(value1, value2) == 0	
 }
 
 func MaxBytes(value string, n int) bool {
