@@ -107,3 +107,43 @@ func (m *UserModel) Get(id int) (User, error) {
 
 	return u, nil
 }
+
+func (m *UserModel) ChangePassword(id int, currentPassword, newPassword string) (bool, error) {
+	var hashedCurrentPassword []byte
+
+	stmt := `SELECT hashed_password FROM users WHERE id = ?`
+
+	err := m.DB.QueryRow(stmt, id).Scan(&hashedCurrentPassword)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return false, ErrNoUser
+		default:
+			return false, err
+		}
+	}
+
+	err = bcrypt.CompareHashAndPassword(hashedCurrentPassword, []byte(currentPassword))
+	if err != nil {
+		switch {
+		case errors.Is(err, bcrypt.ErrMismatchedHashAndPassword):
+			return false, ErrInvalidCredentials
+		default:
+			return false, err
+		}
+	}
+
+	hashedNewPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), 12)
+	if err != nil {
+		return false, err
+	}
+
+	updateStmt := `UPDATE users SET hashed_password = ? WHERE id = ?`
+
+	_, err = m.DB.Exec(updateStmt, string(hashedNewPassword), id)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
