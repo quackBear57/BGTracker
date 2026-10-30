@@ -494,7 +494,109 @@ func (app *application) playerCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) playerCreatePost(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("submit a new player to db..."))
+	var form playerCreateForm
+
+	err := app.decodePostForm(r, &form)
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	form.CheckField(validator.NotBlank(form.Name), "name", "This field cannot be blank")
+	// Add check for scoring?
+	// Add sensible checks for other fields (published player and time min < max)
+
+	if form.UserID != 0 {
+		user, err := app.users.Get(form.UserID)
+		if err != nil {
+			switch {
+			case errors.Is(err, models.ErrNoRecord):
+				form.Validator.AddFieldError("userID", "User not found")
+
+				data := app.newTemplateData(r)
+				data.Form = form
+
+				err := app.render(w, r, http.StatusUnprocessableEntity,
+					"addPlayer.tmpl.html", data)
+				if err != nil {
+					app.serverError(w, r, err)
+				}
+		return
+			default:
+				app.serverError(w, r, err)
+			}
+		return
+		}
+
+		// if passes, user exists
+		// need to check that user id isn't used for another player
+		fmt.Sprintf("user ID searched: %d", user.ID)
+		taken, err := app.players.UserIDTaken(user.ID)
+
+		if err != nil {
+			if taken {
+				form.Validator.AddFieldError("userID", "User ID already in use")
+
+				data := app.newTemplateData(r)
+				data.Form = form
+
+				err := app.render(w, r, http.StatusUnprocessableEntity,
+					"addPlayer.tmpl.html", data)
+				if err != nil {
+					app.serverError(w, r, err)
+				}
+			}
+		}
+	}
+
+	if !form.Valid() {
+		data  := app.newTemplateData(r)
+		data.Form = form
+		
+		err := app.render (w, r, http.StatusUnprocessableEntity, "addPlayer.tmpl.html", data)
+		if err != nil {
+			app.serverError(w, r, err)
+		}
+		return
+	}
+
+	id, err := app.players.Insert(form.Name, form.UserID)
+
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	app.sessionManager.Put(r.Context(), "flash", "Player added successfully!")
+
+	http.Redirect(w, r, fmt.Sprintf("/players/%d", id), http.StatusSeeOther)
+}
+
+func (app *application) playerView(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil || id < 1 {
+		http.NotFound(w,r)
+		return
+	}
+
+	player, err := app.players.Get(id)
+	if err != nil {
+		switch {
+		case errors.Is(err, models.ErrNoRecord):
+			http.NotFound(w,r)
+		default:
+			app.serverError(w, r, err)
+		}
+		return
+	}
+
+	data := app.newTemplateData(r)
+	data.Player = player
+
+	err = app.render(w, r, http.StatusOK, "playerView.tmpl.html", data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
 }
 
 func (app *application) playersView(w http.ResponseWriter, r *http.Request) {
