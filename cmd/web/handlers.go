@@ -492,3 +492,11 @@ func (app *application) playerCreate(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, r, err)
 	}
 }
+
+func (app *application) playerCreatePost(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("submit a new player to db..."))
+}
+
+func (app *application) playersView(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Page to view all of the players..."))
+}
