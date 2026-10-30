@@ -22,7 +22,7 @@ type PlayerModel struct {
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-func (m *PlayerModel) Insert(name string, userID int) error {
+func (m *PlayerModel) Insert(name string, userID int) (int, error) {
 	// Add new player to database
 	
 	stmt := `INSERT INTO players (name, user_id, created)
@@ -31,12 +31,17 @@ func (m *PlayerModel) Insert(name string, userID int) error {
 	// NEED TO CONFIRM USERID EXSITS BEFORE CALLING THIS
 	// also check that non-zero user id's are unique
 	
-	_, err := m.DB.Exec(stmt, name, userID)
+	result, err := m.DB.Exec(stmt, name, userID)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return int(id), nil
 }
 
 func (m *PlayerModel) Exists(id int) (bool, error) {
