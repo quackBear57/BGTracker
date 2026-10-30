@@ -3,10 +3,10 @@ package models
 import (
 	"database/sql"
 	"errors"
-	"strings"
+	// "strings"
 	"time"
 
-	"github.com/go-sql-driver/mysql"
+	// "github.com/go-sql-driver/mysql"
 )
 
 type Player struct {
@@ -31,7 +31,7 @@ func (m *PlayerModel) Insert(name string, userID int) error {
 	// NEED TO CONFIRM USERID EXSITS BEFORE CALLING THIS
 	// also check that non-zero user id's are unique
 	
-	_, err = m.DB.Exec(stmt, name, userID)
+	_, err := m.DB.Exec(stmt, name, userID)
 	if err != nil {
 		return err
 	}
@@ -53,7 +53,7 @@ func (m *PlayerModel) Exists(id int) (bool, error) {
 	return exists, err
 }
 
-func (m *PlayerModel) Get(id int) (User, error) {
+func (m *PlayerModel) Get(id int) (Player, error) {
 	// Get all information about player from DB
 
 	stmt := `SELECT id, name, user_id, created FROM players WHERE id = ?`
@@ -67,9 +67,9 @@ func (m *PlayerModel) Get(id int) (User, error) {
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
-			return User{}, ErrNoRecord
+			return Player{}, ErrNoRecord
 		default:
-			return User{}, err
+			return Player{}, err
 		}
 	}
 
@@ -81,7 +81,7 @@ func (m *PlayerModel) UpdateName(id int, newName string) error {
 
 	stmt := `UPDATE players SET name = ? WHERE id = ?`
 
-	_, err = m.DB.Exec(stmt, newName, id)
+	_, err := m.DB.Exec(stmt, newName, id)
 	if err != nil {
 		return err
 	}
