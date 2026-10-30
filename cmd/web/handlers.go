@@ -530,7 +530,10 @@ func (app *application) playerCreatePost(w http.ResponseWriter, r *http.Request)
 
 		// if passes, user exists
 		// need to check that user id isn't used for another player
-		fmt.Sprintf("user ID searched: %d", user.ID)
+
+		// This isn't properly checking!!!
+		// confirmed the right user id is being entered into this function
+
 		taken, err := app.players.UserIDTaken(user.ID)
 
 		if err != nil {
@@ -550,6 +553,7 @@ func (app *application) playerCreatePost(w http.ResponseWriter, r *http.Request)
 	}
 
 	if !form.Valid() {
+		form.UserID = 0
 		data  := app.newTemplateData(r)
 		data.Form = form
 		
@@ -560,6 +564,9 @@ func (app *application) playerCreatePost(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+
+	// this currently fails when user id = 0 since it's set as a foreign key
+	// 0 doesn't match a user in users, so errors out
 	id, err := app.players.Insert(form.Name, form.UserID)
 
 	if err != nil {

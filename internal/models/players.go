@@ -59,17 +59,18 @@ func (m *PlayerModel) Exists(id int) (bool, error) {
 }
 
 func (m *PlayerModel) UserIDTaken(id int) (bool, error) {
-	// Check if player ID exists
+	// Check if player user ID exists in players
 
-	// Will need to confrim id is non-zero before calling
+	// not currently working
 
-	var taken bool
+	var result string
+	// var taken bool
 
-	stmt := "SELECT EXISTS(SELECT true FROM players WHERE user_id = ?)"
+	stmt := "SELECT name FROM players WHERE user_id = ?"
 
-	err := m.DB.QueryRow(stmt, id).Scan(&taken)
+	err := m.DB.QueryRow(stmt, id).Scan(&result)
 	
-	return taken, err
+	return result != "", err
 }
 
 func (m *PlayerModel) Get(id int) (Player, error) {
