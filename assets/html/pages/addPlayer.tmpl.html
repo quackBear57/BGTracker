@@ -1,0 +1,24 @@
+{{define "title"}}Add A Player{{end}}
+
+{{define "main"}}
+<form action="/user/signup" method="POST" novalidate>
+    <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+    <div>
+        <label>Name:</label>
+        {{with .Form.FieldErrors.name}}
+            <label class="error">{{.}}</label>
+        {{end}}
+        <input type="text" name="name" value="{{.Form.Name}}">
+    </div>
+    <div>
+        <label>Email:</label>
+        {{with .Form.FieldErrors.userID}}
+            <label class="error">{{.}}</label>
+        {{end}}
+        <input type="number" name="userID" value="{{.Form.UserID}}">
+    </div>
+    <div>
+        <input type="submit" value="Signup">
+    </div>
+</form>
+{{end}}
