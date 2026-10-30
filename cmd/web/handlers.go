@@ -47,6 +47,12 @@ type userChangePasswordForm struct {
 	validator.Validator		`form:"-"`
 }
 
+type playerCreateForm struct {
+	Name					string `form:"name"`
+	UserID					int `form:"userID"`
+	validator.Validator		`form:"-"`
+}
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
@@ -475,4 +481,14 @@ func (app *application) changePassPost(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/user/account", http.StatusSeeOther)
 
 	
+}
+
+func (app *application) playerCreate(w http.ResponseWriter, r *http.Request) {
+	data := app.newTemplateData(r)
+	data.Form = playerCreateForm{}
+
+	err := app.render(w, r, http.StatusOK, "addPlayer.tmpl.html", data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
 }
