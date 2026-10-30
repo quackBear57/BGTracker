@@ -16,6 +16,7 @@ type templateData struct {
 	User				models.User
 	Game				models.Game
 	Games				[]models.Game
+	Player				models.Player
 	Form				any
 	Flash				string
 	IsAuthenticated		bool
