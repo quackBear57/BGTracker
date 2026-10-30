@@ -24,6 +24,7 @@ func (app *application) routes() http.Handler {
 	mux.Handle("POST /user/signup", dynamic.ThenFunc(app.userSignupPost))
 	mux.Handle("GET /user/login", dynamic.ThenFunc(app.userLogin))
 	mux.Handle("POST /user/login", dynamic.ThenFunc(app.userLoginPost))
+	mux.Handle("GET /players", dynamic.ThenFunc(app.playersView))
 
 	// for protected routes (require autentication)
 	protected := dynamic.Append(app.requireAuthentication)
@@ -34,6 +35,7 @@ func (app *application) routes() http.Handler {
 	mux.Handle("GET /user/account", protected.ThenFunc(app.accountView))
 	mux.Handle("GET /user/account/change-password", protected.ThenFunc(app.changePass))
 	mux.Handle("POST /user/account/change-password", protected.ThenFunc(app.changePassPost))
+	mux.Handle("GET /players/new", protected.ThenFunc(app.playerCreate))
 
 	standard := alice.New(app.recoverPanic, app.logRequest, commonHeaders)
 	return standard.Then(mux)
