@@ -5,10 +5,34 @@
     font-size: 18px;
     font-family: "Ubuntu Mono", monospace;
 
-    --backgroundColor: #F1F3F6;
-    --textColor: #34495E;
-    --dark-mode-bg-color: #00304C;
-    --dark-mode-text-color: #F5F5F5;
+    --light-gray: #DEDEDE;
+    --very-light-gray: #F7F9FA;
+    --light-blue-gray: #D3D7E0;
+    --medium-gray: #6A6C6F;
+    --medium-blue: #006AA8;
+    --medium-dark-blue: #34495E;
+    --medium-darker-blue: #103857;
+    --dark-blue: #00304C;
+    --light-green: #4EB722;
+    --fun-green: #0EB258;
+    --orange: #E69602;
+    --dark-orange: #8C5800;
+    --white: #FFFFFF;
+    --bright-red: #F0331F;
+
+    
+    --light-background-color: var(--light-blue-gray);
+    --light-text-color: var(--medium-dark-blue);
+    --dark-mode-bg-color: var(--dark-blue);
+    --dark-mode-text-color: var(--light-blue-gray);
+
+    --borderColor: var(--orange);
+    --tableBorderColor: var(--medium-dark-blue);
+    --flashBackround: var(--fun-green);
+    --errorColor: var(--bright-red);
+    --textColor: var(--dark-mode-text-color);
+    --backgroundColor: var(--dark-mode-bg-color);
+    --linkColor: var(--light-green);
     --darkModeTransition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
 }
 
@@ -22,11 +46,6 @@ body {
     color: var(--textColor);
     transition: var(--darkModeTransition);
     overflow-y: scroll;
-}
-
-body.darktheme {
-    --textColor: var(--dark-mode-text-color);
-    --backgroundColor: var(--dark-mode-bg-color);
 }
 
 header, nav, main, footer {
@@ -53,7 +72,7 @@ h1 a {
 
 h1 a:hover {
     text-decoration: none;
-    color: #34495E;
+    color: var(--textColor);
 }
 
 h2 {
@@ -64,12 +83,12 @@ h2 {
 }
 
 a {
-    color: #62CB31;
+    color: var(--linkColor);
     text-decoration: none;
 }
 
 a:hover {
-    color: #4EB722;
+    color: var(--linkColor);
     text-decoration: underline;
 }
 
@@ -85,7 +104,7 @@ header {
     background-image: linear-gradient(to right, #34495e, #34495e 25%, #9b59b6 25%, #9b59b6 35%, #3498db 35%, #3498db 45%, #62cb31 45%, #62cb31 55%, #ffb606 55%, #ffb606 65%, #e67e22 65%, #e67e22 75%, #e74c3c 85%, #e74c3c 85%, #c0392b 85%, #c0392b 100%);
     background-size: 100% 6px;
     background-repeat: no-repeat;
-    border-bottom: 1px solid #E4E5E7;
+    border-bottom: 1px solid var(--orange);
     overflow: auto;
     padding-top: 33px;
     padding-bottom: 27px;
@@ -98,7 +117,7 @@ header div {
 }
 
 header a {
-    color: #34495E;
+    color: var(--textColor);
     text-decoration: none;
 }
 
@@ -109,12 +128,12 @@ header #dark-mode-toggle {
 }
 
 nav {
-    border-bottom: 1px solid #E4E5E7;
+    border-bottom: 1px solid var(--borderColor);
     padding-top: 17px;
     padding-bottom: 15px;
-    background: #F7F9FA;
+    background: var(--medium-darker-blue);
     height: 60px;
-    color: #6A6C6F;
+    color: var(--textColor);
 }
 
 nav a {
@@ -142,7 +161,7 @@ nav div:last-child a {
 }
 
 nav a.live {
-    color: #34495E;
+    color: var(--textColor);
     cursor: default;
 }
 
@@ -158,17 +177,17 @@ nav a.live:after {
     top: 9px;
     width: 14px;
     height: 14px;
-    background: #F7F9FA;
-    border-left: 1px solid #E4E5E7;
-    border-bottom: 1px solid #E4E5E7;
+    background: var(--textColor);
+    border-left: 1px solid var(--borderColor);
+    border-bottom: 1px solid var(--borderColor);
     -moz-transform: rotate(45deg);
     -webkit-transform: rotate(-45deg);
 }
 
 a.button, input[type="submit"] {
-    background-color: #62CB31;
+    background-color: var(--linkColor);
     border-radius: 3px;
-    color: #FFFFFF;
+    color: var(--white);
     padding: 18px 27px;
     border: none;
     display: inline-block;
@@ -177,8 +196,8 @@ a.button, input[type="submit"] {
 }
 
 a.button:hover, input[type="submit"]:hover {
-    background-color: #4EB722;
-    color: #FFFFFF;
+    background-color: var(--linkColor);
+    color: var(--white);
     cursor: pointer;
     text-decoration: none;
 }
@@ -188,7 +207,7 @@ form div {
 }
 
 form div:last-child {
-    border-top: 1px dashed #E4E5E7;
+    border-top: 1px dashed var(--medium-gray);
 }
 
 form input[type="radio"] {
@@ -201,9 +220,9 @@ form input[type="text"], form input[type="password"], form input[type="email"] {
 }
 
 form input[type=text], form input[type="password"], form input[type="email"], textarea {
-    color: #6A6C6F;
-    background: #FFFFFF;
-    border: 1px solid #E4E5E7;
+    color: var(--dark-blue);
+    background: var(--light-gray);
+    border: 1px solid var(--borderColor);
     border-radius: 3px;
 }
 
@@ -213,13 +232,13 @@ form label {
 }
 
 .error {
-    color: #C0392B;
+    color: var(--errorColor);
     font-weight: bold;
     display: block;
 }
 
 .error + textarea, .error + input {
-    border-color: #C0392B !important;
+    border-color: var(--errorColor) !important;
     border-width: 2px !important;
 }
 
@@ -233,12 +252,12 @@ button {
     background: none;
     padding: 0;
     border: none;
-    color: #62CB31;
+    color: var(--linkColor);
     text-decoration: none;
 }
 
 button:hover {
-    color: #4EB722;
+    color: var(--linkColor);
     text-decoration: underline;
     cursor: pointer;
 }
@@ -248,23 +267,23 @@ div codeSmall, div spanSmall {
 }
 
 .game {
-    background-color: #FFFFFF;
-    border: 1px solid #E4E5E7;
+    background-color: var(--backgroundColor);
+    border: 1px solid var(--tableBorderColor);
     border-radius: 3px;
 }
 
 .game pre {
     padding: 18px;
     /* border-top: 1px solid #E4E5E7; */
-    border-bottom: 1px solid #E4E5E7;
+    border-bottom: 1px solid var(--backgroundColor);
 }
 
 .game .minorInfo {
     padding: 6px 18px;
-    background-color: #F7F9FA;
-    color: #6A6C6F;
+    background-color: var(--medium-darker-blue);
+    color: var(--light-gray);
     /* border-top: 1px solid #E4E5E7; */
-    border-bottom: 1px solid #E4E5E7;
+    border-bottom: 1px solid var(--tableBorderColor);
 }
 
 .game .minorInfo span, .game .minorInfo spanSmall {
@@ -272,11 +291,11 @@ div codeSmall, div spanSmall {
 }
 
 .game .metadata {
-    background-color: #F7F9FA;
-    color: #6A6C6F;
+    background-color: var(--backgroundColor);
+    color: var(--flashBackround);
     padding: 0.75em 18px;
     overflow: auto;
-    border-bottom: 1px solid #E4E5E7;
+    border-bottom: 1px solid var(--tableBorderColor);
 }
 
 .game .metadata span {
@@ -284,7 +303,7 @@ div codeSmall, div spanSmall {
 }
 
 .game .metadata strong {
-    color: #34495E;
+    color: var(--flashBackround);
 }
 
 .game .metadata time {
@@ -301,21 +320,21 @@ div codeSmall, div spanSmall {
 
 .minorInfo a {
     font-size: 16px;
-    color: #6767D6;
+    color: var(--medium-blue);
 }
 
 div.flash {
-    color: #FFFFFF;
+    color: var(--white);
     font-weight: bold;
-    background-color: #34495E;
+    background-color: var(--flashBackround);
     padding: 18px;
     margin-bottom: 36px;
     text-align: center;
 }
 
 div.error {
-    color: #FFFFFF;
-    background-color: #C0392B;
+    color: var(--white);
+    background-color: var(--errorColor);
     padding: 18px;
     margin-bottom: 36px;
     font-weight: bold;
@@ -323,8 +342,8 @@ div.error {
 }
 
 table {
-    background: white;
-    border: 1px solid #E4E5E7;
+    background: var(--backgroundColor);
+    border: 1px solid var(--tableBorderColor);
     border-collapse: collapse;
     width: 100%;
 }
@@ -336,23 +355,23 @@ td, th {
 
 th:last-child, td:last-child {
     text-align: right;
-    color: #6A6C6F;
+    color: var(--light-gray);
 }
 
 tr {
-    border-bottom: 1px solid #E4E5E7;
+    border-bottom: 1px solid var(--tableBorderColor);
 }
 
 tr:nth-child(2n) {
-    background-color: #F7F9FA;
+    background-color: var(--medium-dark-blue);
 }
 
 footer {
-    border-top: 1px solid #E4E5E7;
+    border-top: 1px solid var(--medium-gray);
     padding-top: 17px;
     padding-bottom: 15px;
-    background: #F7F9FA;
+    background: var(--medium-dark-blue);
     height: 60px;
-    color: #6A6C6F;
+    color: var(--textColor);
     text-align: center;
 }
