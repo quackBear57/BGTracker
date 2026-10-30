@@ -23,6 +23,7 @@ type application struct {
 	logger				*slog.Logger
 	games				*models.GameModel
 	users				*models.UserModel
+	players				*models.PlayerModel
 	templateCache		map[string]*template.Template
 	formDecoder			*form.Decoder
 	sessionManager		*scs.SessionManager
@@ -65,6 +66,7 @@ func main() {
 		logger:				logger,
 		games:				&models.GameModel{DB: db},
 		users:				&models.UserModel{DB: db},
+		players:			&models.PlayerModel{DB: db},
 		templateCache:		templateCache,
 		formDecoder:		formDecoder,
 		sessionManager:		sessionManager,
