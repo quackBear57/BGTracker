@@ -108,3 +108,35 @@ func (m *PlayerModel) UpdateName(id int, newName string) error {
 
 	return nil
 }
+
+func (m *PlayerModel) Latest() ([]Player, error) {
+	stmt := `SELECT id, name, user_id, created FROM players WHERE created < DATE_ADD(UTC_TIMESTAMP(), 
+	INTERVAL ? DAY) ORDER BY id DESC LIMIT 10`
+
+	rows, err := m.DB.Query(stmt, 30)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var players []Player
+
+	for rows.Next() {
+		var p Player
+		
+		err = rows.Scan(&p.ID, &p.Name, &p.UserID, &p.Created)
+		
+		if err != nil {
+			return nil, err
+		}
+
+		players = append(players, p)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	
+	return players, nil
+}
