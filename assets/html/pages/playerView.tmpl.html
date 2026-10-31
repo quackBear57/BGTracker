@@ -8,10 +8,7 @@
             <span>#{{.ID}}</span>
         </div>
         <div class="minorInfo">
-            <codeSmall>Name: {{.Name}}</codeSmall>
-        </div>
-        <div class="minorInfo">
-            <a href="/user/account/change-password">Change Password</a>
+            <a href="/players/change-name/{{.ID}}">Change Name</a>
         </div>
         <div class="metadata">
             <time>Created: {{humanDate .Created}}</time>
