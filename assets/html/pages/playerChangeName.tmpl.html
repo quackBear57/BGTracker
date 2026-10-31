@@ -1,0 +1,26 @@
+{{define "title"}}Change Name{{end}}
+
+{{define "main"}}
+<div class="game">
+    <div class="metadata">
+        <strong>{{.Player.Name}}</strong>
+        <span>#{{.Player.ID}}</span>
+    </div>
+</div>
+<form action="/players/change-name/{{.Player.ID}}" method="POST" novalidate>
+    <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+    {{range .Form.NonFieldErrors}}
+        <div class="error">{{.}}</div>
+    {{end}}
+    <div>
+        <label>New Name:</label>
+        {{with .Form.FieldErrors.name}}
+            <label class="error">{{.}}</label>
+        {{end}}
+        <input type="name" name="newName">
+    </div>
+    <div>
+        <input type="submit" value="Change Name">
+    </div>
+</form>
+{{end}}
