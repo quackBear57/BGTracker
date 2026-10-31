@@ -2,7 +2,7 @@
 
 {{define "main"}}
     <h2>Recently Added Players</h2>
-    {{if .Games}}
+    {{if .Players}}
     <table>
         <tr>
             <th>Name</th>
@@ -11,7 +11,7 @@
         {{range .Players}}
         <tr>
             <td><a href="/players/{{.ID}}">{{.Name}}</a></td>
-            <td>{{humanDate .Added}}</td>
+            <td>{{humanDate .Created}}</td>
             <td>#{{.ID}}</td>
         </tr>
         {{end}}
