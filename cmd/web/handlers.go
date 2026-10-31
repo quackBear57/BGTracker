@@ -528,9 +528,6 @@ func (app *application) playerCreatePost(w http.ResponseWriter, r *http.Request)
 		return
 		}
 
-		// if passes, user exists
-		// need to check that user id isn't used for another player
-
 		// This isn't properly checking!!!
 		// confirmed the right user id is being entered into this function
 
@@ -607,5 +604,17 @@ func (app *application) playerView(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) playersView(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Page to view all of the players..."))
+	players, err := app.players.Latest()
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	data := app.newTemplateData(r)
+	data.Players = players
+
+	err = app.render(w, r, http.StatusOK, "playersView.tmpl.html", data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
 }
