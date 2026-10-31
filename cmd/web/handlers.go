@@ -53,6 +53,11 @@ type playerCreateForm struct {
 	validator.Validator		`form:"-"`
 }
 
+type playerChangeNameForm struct {
+	NewName					string `form:"newName"`
+	validator.Validator		`form:"-"`
+}
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
@@ -539,7 +544,7 @@ func (app *application) playerCreatePost(w http.ResponseWriter, r *http.Request)
 
 		if taken == true {
 			form.Validator.AddFieldError("userID", "User ID already in use")
-			
+
 			data := app.newTemplateData(r)
 			data.Form = form
 
@@ -603,6 +608,86 @@ func (app *application) playerView(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		app.serverError(w, r, err)
 	}
+}
+
+func (app *application) playerChangeName(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil || id < 1 {
+		http.NotFound(w,r)
+		return
+	}
+
+	player, err := app.players.Get(id)
+	if err != nil {
+		switch {
+		case errors.Is(err, models.ErrNoRecord):
+			http.NotFound(w,r)
+		default:
+			app.serverError(w, r, err)
+		}
+		return
+	}
+	
+	data := app.newTemplateData(r)
+	data.Player = player
+	data.Form = playerChangeNameForm{}
+	
+	err = app.render(w, r, http.StatusOK, "playerChangeName.tmpl.html", data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+}
+
+func (app *application) playerChangeNamePost(w http.ResponseWriter, r *http.Request) {
+	var form playerChangeNameForm
+
+	err := app.decodePostForm(r, &form)
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	form.CheckField(validator.NotBlank(form.NewName), "newName",
+		"This field cannot be blank")
+
+	if !form.Valid() {
+		data := app.newTemplateData(r)
+		data.Form = form
+		
+		err := app.render(w, r, http.StatusUnprocessableEntity,
+			"playerChangeName.tmpl.html", data)
+		if err != nil {
+			app.serverError(w,r, err)
+		}
+		return
+	}
+
+	id, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil || id < 1 {
+		http.NotFound(w,r)
+		return
+	}
+
+	err = app.players.UpdateName(id, form.NewName)
+	if err != nil {
+			app.serverError(w, r, err)
+	}
+
+	if err != nil {
+		form.AddNonFieldError("Unknown error")
+		data := app.newTemplateData(r)
+		data.Form = form
+	
+		err := app.render(w, r, http.StatusUnprocessableEntity,
+			"playerChangeName.tmpl.html", data)
+		if err != nil {
+			app.serverError(w, r, err)
+		}
+	}
+
+	app.sessionManager.Put(r.Context(), "flash", "Name changed successfully!")
+	
+	http.Redirect(w, r, fmt.Sprintf("/players/%d", id), http.StatusSeeOther)	
 }
 
 func (app *application) playersView(w http.ResponseWriter, r *http.Request) {
