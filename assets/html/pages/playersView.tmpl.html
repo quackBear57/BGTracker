@@ -1,0 +1,22 @@
+{{define "title"}}Home{{end}}
+
+{{define "main"}}
+    <h2>Recently Added Players</h2>
+    {{if .Games}}
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>ID</th>
+        </tr>
+        {{range .Players}}
+        <tr>
+            <td><a href="/players/{{.ID}}">{{.Name}}</a></td>
+            <td>{{humanDate .Added}}</td>
+            <td>#{{.ID}}</td>
+        </tr>
+        {{end}}
+    </table>
+    {{else}}
+        <p>There's nothing here yet!</p>
+    {{end}}
+{{end}}
