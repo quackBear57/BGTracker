@@ -534,17 +534,19 @@ func (app *application) playerCreatePost(w http.ResponseWriter, r *http.Request)
 		taken, err := app.players.UserIDTaken(user.ID)
 
 		if err != nil {
-			if taken {
-				form.Validator.AddFieldError("userID", "User ID already in use")
+			app.serverError(w, r, err)
+		}
 
-				data := app.newTemplateData(r)
-				data.Form = form
+		if taken == true {
+			form.Validator.AddFieldError("userID", "User ID already in use")
+			
+			data := app.newTemplateData(r)
+			data.Form = form
 
-				err := app.render(w, r, http.StatusUnprocessableEntity,
-					"addPlayer.tmpl.html", data)
-				if err != nil {
-					app.serverError(w, r, err)
-				}
+			err := app.render(w, r, http.StatusUnprocessableEntity,
+				"addPlayer.tmpl.html", data)
+			if err != nil {
+				app.serverError(w, r, err)
 			}
 		}
 	}
