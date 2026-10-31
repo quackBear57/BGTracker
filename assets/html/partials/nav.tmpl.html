@@ -4,7 +4,9 @@
         <a href='/'>Home</a>
         {{if .IsAuthenticated}}
             <a href="/games/new">Add Game</a>
+            <a href="/players/new">Add Player</a>
         {{end}}
+        <a href="/players">Players</a>
     </div>
     <div>
         {{if .IsAuthenticated}}
