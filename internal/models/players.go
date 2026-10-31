@@ -66,7 +66,7 @@ func (m *PlayerModel) UserIDTaken(id int) (bool, error) {
 	var result string
 	// var taken bool
 
-	stmt := "SELECT name FROM players WHERE user_id = ?"
+	stmt := "SELECT true WHERE EXISTS(SELECT true FROM players WHERE id = ?)"
 
 	err := m.DB.QueryRow(stmt, id).Scan(&result)
 	
