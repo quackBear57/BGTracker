@@ -1,7 +1,12 @@
 {{define "title"}}Home{{end}}
 
 {{define "main"}}
-    <h2>Active Players</h2>
+    <div class="mainHeader">
+        <div><h2>Active Players</h2></div>
+        {{if .IsAuthenticated}}
+            <div><a href="/players/new">Add Player</a></div>
+        {{end}}
+    </div>
     {{if .Players}}
     <table>
         <tr>
