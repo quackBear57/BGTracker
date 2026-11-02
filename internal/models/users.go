@@ -148,7 +148,7 @@ func (m *UserModel) ChangePassword(id int, currentPassword, newPassword string) 
 	return true, nil
 }
 
-func (m *PlayerModel) UpdateName(id int, newName string) error {
+func (m *UserModel) UpdateName(id int, newName string) error {
 	// Update a name for a given player ID
 
 	stmt := `UPDATE users SET name = ? WHERE id = ?`
