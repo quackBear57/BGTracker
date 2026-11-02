@@ -33,12 +33,17 @@ type application struct {
 
 func main() {
 	addr := flag.String("addr", ":4000", "HTTP network port")
-	// database_user := 
 	
+	database_user := os.Getenv("DATABASE_USER")
+	database_password := os.Getenv("DATABASE_PASSWORD")
+	database_url := os.Getenv("DATABASE_URL")
+	database_port := os.Getenv("DATABASE_PORT")
+
 	dsn := flag.String("dsn",
-	"bgtracker_ur:spree-sculpture-commuting@tcp(192.168.0.3:3306)/bgtracker?parseTime=true",
+	database_user + ":" + database_password + 
+	"@tcp(" + database_url + ":" + database_port + ")/bgtracker?parseTime=true",
 	"data source name")
-	
+
 	debug_env, err := strconv.ParseBool(os.Getenv("DEBUG"))
 	debug := flag.Bool("debug", debug_env, "Enable debug logs")
 	flag.Parse()
@@ -47,7 +52,10 @@ func main() {
 		Level: slog.LevelDebug,
 	}))
 
-	fmt.
+	fmt.Printf("Db user: %s\n", database_user)
+	fmt.Printf("Db password: %s\n", "not shown")
+	fmt.Printf("Db URL: %s\n", database_url)
+	fmt.Printf("Db port: %s\n", database_port)
 	fmt.Printf("Debug env: %t\n", debug_env)
 
 
