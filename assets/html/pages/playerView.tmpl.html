@@ -6,6 +6,11 @@
             <strong>{{.Player.Name}}</strong>
             <span>#{{.Player.ID}}</span>
         </div>
+        {{if .IsAuthenticated}}
+            <div class="minorInfo">
+                <a href="/players/change-name/{{.Player.ID}}">Change Name</a>
+            </div>
+        {{end}}
         {{if eq .Player.UserID 0}}
             <div class="minorInfo">
                 <codeSmall>Associated User:</codeSmall>
@@ -17,9 +22,6 @@
                 <spanSmall>{{.User.Name}}</spanSmall>
             </div>
         {{end}}
-        <div class="minorInfo">
-            <a href="/players/change-name/{{.Player.ID}}">Change Name</a>
-        </div>
         <div class="metadata">
             <time>Created: {{humanDate .Player.Created}}</time>
         </div>
