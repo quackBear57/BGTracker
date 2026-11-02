@@ -11,18 +11,16 @@
     <table>
         <tr>
             <th>Name (Year)</th>
-            <th>Player Min</th>
-            <th>Player Max</th>
-            <th>Time Min</th>
-            <th>Time Max</th>
+            <th class="col_set_w">Players</th>
+            <th class="col_set_w">Time (min)</th>
+            <th>ID</th>
         </tr>
         {{range .Games}}
         <tr>
-            <td><a href="/games/{{.ID}}">{{.Title}}</a></td>
-            <td>{{.Player_min}}</td>
-            <td>{{.Player_max}}</td>
-            <td>{{.Playtime_min}}</td>
-            <td>{{.Playtime_max}}</td>
+            <td><a href="/games/{{.ID}}">{{.Title}} ({{.Year_pub}})</a></td>
+            <td class="center">{{.Player_min}} - {{.Player_max}}</td>
+            <td class="center">{{.Playtime_min}} - {{.Playtime_max}}</td>
+            <td>{{.ID}}</td>
         </tr>
         {{end}}
     </table>

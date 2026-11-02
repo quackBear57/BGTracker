@@ -365,6 +365,15 @@ td, th {
     padding: 9px 18px;
 }
 
+th.col_set_w {
+    width: 150px;
+    text-align: center;
+}
+
+td.center {
+    text-align: center;
+}
+
 th:last-child, td:last-child {
     text-align: right;
     color: var(--light-gray);
