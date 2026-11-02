@@ -147,3 +147,16 @@ func (m *UserModel) ChangePassword(id int, currentPassword, newPassword string) 
 
 	return true, nil
 }
+
+func (m *PlayerModel) UpdateName(id int, newName string) error {
+	// Update a name for a given player ID
+
+	stmt := `UPDATE users SET name = ? WHERE id = ?`
+
+	_, err := m.DB.Exec(stmt, newName, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
