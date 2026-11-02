@@ -1,11 +1,12 @@
 {{define "title"}}Home{{end}}
 
 {{define "main"}}
-    <h2>Recently Added Players</h2>
+    <h2>Active Players</h2>
     {{if .Players}}
     <table>
         <tr>
             <th>Name</th>
+            <th>Created</th>
             <th>ID</th>
         </tr>
         {{range .Players}}
