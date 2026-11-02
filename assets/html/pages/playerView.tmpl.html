@@ -8,11 +8,13 @@
         </div>
         {{if eq .Player.UserID 0}}
             <div class="minorInfo">
-                <codeSmall>Associated User: None</codeSmall>
+                <codeSmall>Associated User:</codeSmall>
+                <spanSmall>None</spanSmall>
             </div>
         {{else}}
             <div class="minorInfo">
-                <codeSmall>Associated User: {{.User.Name}}</codeSmall>
+                <codeSmall>Associated User:</codeSmall>
+                <spanSmall>{{.User.Name}}</spanSmall>
             </div>
         {{end}}
         <div class="minorInfo">
