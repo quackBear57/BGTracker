@@ -320,7 +320,10 @@ div codeSmall, div spanSmall {
 
 .minorInfo a {
     font-size: 16px;
-    color: var(--medium-blue);
+}
+
+.spanLink {
+    float: right;
 }
 
 div.flash {
