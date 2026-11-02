@@ -90,7 +90,20 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 // GAME FUNCTIONS
 
 func (app *application) gamesView(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Page to view all of the games..."))
+	// Default limit of 50, can set links/forms to change this later?
+	games, err := app.games.GetList(50)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	data := app.newTemplateData(r)
+	data.Games = games
+
+	err = app.render(w, r, http.StatusOK, "gamesView.tmpl.html", data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
 }
 
 func (app *application) gameView(w http.ResponseWriter, r *http.Request) {
