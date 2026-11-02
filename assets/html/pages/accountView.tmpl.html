@@ -13,15 +13,17 @@
             <codeSmall>Email:</codeSmall>
             <spanSmall>{{.User.Email}}</spanSmall>
         </div>
-        {{if ne .Player.Name ""}}
-            <div class="minorInfo">
-                <codeSmall>Associated Player:</codeSmall>
+        <div class="minorInfo">
+            <codeSmall>Associated Player:</codeSmall>
+            {{if ne .Player.Name ""}}
                 <a class="spanLink" href="/players/{{.Player.ID}}">{{.Player.Name}}</a>
-            </div>
-            <div class="minorInfo">
-                <a href="/players/assign">Change Associated Player</a>
-            </div>
-        {{end}}
+            {{else}}
+                <spanSmall>None</spanSmall>
+            {{end}}
+        </div>
+        <div class="minorInfo">
+            <a href="/players/assign">Change Associated Player</a>
+        </div>
         <div class="minorInfo">
             <codeSmall>Created:</codeSmall>
             <spanSmall>{{humanDate .User.Created}}</spanSmall>
