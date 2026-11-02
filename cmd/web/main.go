@@ -32,6 +32,8 @@ type application struct {
 
 func main() {
 	addr := flag.String("addr", ":4000", "HTTP network port")
+	// database_user := 
+	
 	dsn := flag.String("dsn",
 	"bgtracker_ur:spree-sculpture-commuting@tcp(192.168.0.3:3306)/bgtracker?parseTime=true",
 	"data source name")
@@ -42,6 +44,10 @@ func main() {
 	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
 		Level: slog.LevelDebug,
 	}))
+
+	fmt.Println("Debug env: ", debug_env)
+	fmt.Println("Debug mode: ", debug)
+
 
 	db, err := openDB(*dsn)
 	if err != nil {
