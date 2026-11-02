@@ -137,3 +137,34 @@ func (m *PlayerModel) Latest() ([]Player, error) {
 	
 	return players, nil
 }
+
+func (m *PlayerModel) GetList(limit int) ([]Player, error) {
+	stmt := `SELECT id, name, user_id, created FROM players ORDER BY id DESC LIMIT ?`
+
+	rows, err := m.DB.Query(stmt, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var players []Player
+
+	for rows.Next() {
+		var p Player
+		
+		err = rows.Scan(&p.ID, &p.Name, &p.UserID, &p.Created)
+		
+		if err != nil {
+			return nil, err
+		}
+
+		players = append(players, p)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	
+	return players, nil
+}
