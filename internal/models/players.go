@@ -191,3 +191,35 @@ func (m *PlayerModel) GetList(limit int) ([]Player, error) {
 	
 	return players, nil
 }
+
+func (m *PlayerModel) GetUnassigned() ([]Player, error) {
+	stmt := `SELECT id, name, user_id, created FROM players WHERE user_id = 0 
+	ORDER BY id DESC`
+
+	rows, err := m.DB.Query(stmt)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var players []Player
+
+	for rows.Next() {
+		var p Player
+		
+		err = rows.Scan(&p.ID, &p.Name, &p.UserID, &p.Created)
+		
+		if err != nil {
+			return nil, err
+		}
+
+		players = append(players, p)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	
+	return players, nil
+}
