@@ -1,22 +1,26 @@
 {{define "title"}}Game #{{.Game.ID}}{{end}}
 
 {{define "main"}}
-    {{with .User}}
     <div class="game">
         <div class="metadata">
-            <strong>{{.Name}}</strong>
+            <strong>{{.User.Name}}</strong>
         </div>
         <div class="minorInfo">
             <codeSmall>Email:</codeSmall>
-            <spanSmall>{{.Email}}</spanSmall>
+            <spanSmall>{{.User.Email}}</spanSmall>
         </div>
+        {{if ne .Player.Name ""}}
+            <div class="minorInfo">
+                <codeSmall>Associated Player:</codeSmall>
+                <a class="spanLink" href="/players/{{.Player.ID}}">{{.Player.Name}}</a>
+            </div>
+        {{end}}
         <div class="minorInfo">
             <codeSmall>Created:</codeSmall>
-            <spanSmall>{{humanDate .Created}}</spanSmall>
+            <spanSmall>{{humanDate .User.Created}}</spanSmall>
         </div>
         <div class="minorInfo">
             <a href="/user/account/change-password">Change Password</a>
         </div>
     </div>
-    {{end}}
 {{end}}
