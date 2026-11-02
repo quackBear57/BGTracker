@@ -36,6 +36,8 @@ func (app *application) routes() http.Handler {
 	mux.Handle("GET /user/account", protected.ThenFunc(app.accountView))
 	mux.Handle("GET /user/account/change-password", protected.ThenFunc(app.changePass))
 	mux.Handle("POST /user/account/change-password", protected.ThenFunc(app.changePassPost))
+	mux.Handle("GET /user/account/change-name", protected.ThenFunc(app.userChangeName))
+	mux.Handle("POST /user/account/change-name", protected.ThenFunc(app.userChangeNamePost))
 	mux.Handle("GET /players/new", protected.ThenFunc(app.playerCreate))
 	mux.Handle("POST /players/new", protected.ThenFunc(app.playerCreatePost))
 	mux.Handle("GET /players/change-name/{id}", protected.ThenFunc(app.playerChangeName))
