@@ -703,7 +703,8 @@ func (app *application) playerChangeNamePost(w http.ResponseWriter, r *http.Requ
 }
 
 func (app *application) playersView(w http.ResponseWriter, r *http.Request) {
-	players, err := app.players.Latest()
+	// Default limit of 50, can set links/forms to change this later?
+	players, err := app.players.GetList(50)
 	if err != nil {
 		app.serverError(w, r, err)
 		return
