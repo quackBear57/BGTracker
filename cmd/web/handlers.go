@@ -601,15 +601,19 @@ func (app *application) playerView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := app.users.Get(player.UserID)
-	if err != nil {
-		switch {
-		case errors.Is(err, models.ErrNoRecord):
-			http.NotFound(w, r)
-		default:
-			app.serverError(w, r, err)
+	var user models.User
+
+	if player.UserID != 0 {
+		user, err = app.users.Get(player.UserID)
+		if err != nil {
+			switch {
+			case errors.Is(err, models.ErrNoRecord):
+				http.NotFound(w, r)
+			default:
+				app.serverError(w, r, err)
+			}
+			return
 		}
-		return
 	}
 
 	data := app.newTemplateData(r)
