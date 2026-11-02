@@ -47,6 +47,11 @@ type userChangePasswordForm struct {
 	validator.Validator		`form:"-"`
 }
 
+type userChangeNameForm struct {
+	NewName					string `form:"newName"`
+	validator.Validator		`form:"-"`
+}
+
 type playerCreateForm struct {
 	Name					string `form:"name"`
 	UserID					int `form:"userID"`
@@ -58,7 +63,7 @@ type playerChangeNameForm struct {
 	validator.Validator		`form:"-"`
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//-----------------------------------------------------------------------------
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	games, err := app.games.Latest()
@@ -75,6 +80,9 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, r, err)
 	}
 }
+
+//-----------------------------------------------------------------------------
+// GAME FUNCTIONS
 
 func (app *application) gamesView(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Page to view all of the games..."))
@@ -163,6 +171,10 @@ func (app *application) gameCreatePost(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, fmt.Sprintf("/games/%d", id), http.StatusSeeOther)
 }
+
+
+//-----------------------------------------------------------------------------
+// UER FUNCTIONS
 
 func (app *application) userSignup(w http.ResponseWriter, r *http.Request) {
 	data := app.newTemplateData(r)
@@ -502,6 +514,81 @@ func (app *application) changePassPost(w http.ResponseWriter, r *http.Request) {
 
 	
 }
+
+func (app *application) userChangeName(w http.ResponseWriter, r *http.Request) {
+	id := app.sessionManager.GetInt(r.Context(), "authenticatedUserID")
+
+	user, err := app.users.Get(id)
+	if err != nil {
+		switch {
+		case errors.Is(err, models.ErrNoRecord):
+			http.NotFound(w,r)
+		default:
+			app.serverError(w, r, err)
+		}
+		return
+	}
+	
+	data := app.newTemplateData(r)
+	data.User = user
+	data.Form = userChangeNameForm{}
+	
+	err = app.render(w, r, http.StatusOK, "userChangeName.tmpl.html", data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+}
+
+func (app *application) userChangeNamePost(w http.ResponseWriter, r *http.Request) {
+	var form userChangeNameForm
+
+	err := app.decodePostForm(r, &form)
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	form.CheckField(validator.NotBlank(form.NewName), "newName",
+		"This field cannot be blank")
+
+	if !form.Valid() {
+		data := app.newTemplateData(r)
+		data.Form = form
+		
+		err := app.render(w, r, http.StatusUnprocessableEntity,
+			"userChangeName.tmpl.html", data)
+		if err != nil {
+			app.serverError(w,r, err)
+		}
+		return
+	}
+
+	id := app.sessionManager.GetInt(r.Context(), "authenticatedUserID")
+
+	err = app.users.UpdateName(id, form.NewName)
+	if err != nil {
+			app.serverError(w, r, err)
+	}
+
+	if err != nil {
+		form.AddNonFieldError("Unknown error")
+		data := app.newTemplateData(r)
+		data.Form = form
+	
+		err := app.render(w, r, http.StatusUnprocessableEntity,
+			"userChangeName.tmpl.html", data)
+		if err != nil {
+			app.serverError(w, r, err)
+		}
+	}
+
+	app.sessionManager.Put(r.Context(), "flash", "Name changed successfully!")
+	
+	http.Redirect(w, r, "/user/account", http.StatusSeeOther)	
+}
+
+//-----------------------------------------------------------------------------
+// PLAYER FUNCTIONS
 
 func (app *application) playerCreate(w http.ResponseWriter, r *http.Request) {
 	data := app.newTemplateData(r)
