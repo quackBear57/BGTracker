@@ -38,10 +38,12 @@ func main() {
 	database_password := os.Getenv("DATABASE_PASSWORD")
 	database_url := os.Getenv("DATABASE_URL")
 	database_port := os.Getenv("DATABASE_PORT")
+	database_name := os.Getenv("DATABASE_NAME")
 
 	dsn := flag.String("dsn",
 	database_user + ":" + database_password + 
-	"@tcp(" + database_url + ":" + database_port + ")/bgtracker?parseTime=true",
+	"@tcp(" + database_url + ":" + database_port + ")/"  + database_name +
+	"?parseTime=true",
 	"data source name")
 
 	debug_env, err := strconv.ParseBool(os.Getenv("DEBUG"))
@@ -52,10 +54,12 @@ func main() {
 		Level: slog.LevelDebug,
 	}))
 
+	// Print out environment flags:
 	fmt.Printf("Db user: %s\n", database_user)
-	fmt.Printf("Db password: %s\n", "not shown")
+	// fmt.Printf("Db password: %s\n", "not shown")
 	fmt.Printf("Db URL: %s\n", database_url)
 	fmt.Printf("Db port: %s\n", database_port)
+	fmt.Printf("Db name: %s\n", database_name)
 	fmt.Printf("Debug env: %t\n", debug_env)
 
 
