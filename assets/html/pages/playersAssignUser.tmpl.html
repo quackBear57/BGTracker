@@ -11,19 +11,19 @@
             <th>Name</th>
             <th>Created</th>
             <th>ID</th>
-            <th>Select</th>
         </tr>
         {{range .Players}}
         <tr>
-            <td><a href="/players/{{.ID}}">{{.Name}}</a></td>
-            <td>{{humanDate .Created}}</td>
-            <td>#{{.ID}}</td>
-            <td><form action="/players/assign" method="POST">
+            <td>
+                <form action="/players/assign" method="POST">
                 <input type="hidden" name="csrf_token" value="{{$.CSRFToken}}">
                 <input type="hidden" name="playerID" value="{{.ID}}">
-                <button>Select</button>
+                <button>{{.Name}}</button>
                 </form>
             </td>
+            <td>{{humanDate .Created}}</td>
+            <td>#{{.ID}}</td>
+            
         </tr>
         {{end}}
     </table>
