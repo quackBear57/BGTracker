@@ -93,6 +93,29 @@ func (m *PlayerModel) Get(id int) (Player, error) {
 	return p, nil
 }
 
+func (m *PlayerModel) GetByUser(userID int) (Player, error) {
+	// Get all information about player from DB
+
+	stmt := `SELECT id, name, user_id, created FROM players WHERE user_id = ?`
+
+	row := m.DB.QueryRow(stmt, userID)
+
+	var p Player
+
+	err := row.Scan(&p.ID, &p.Name, &p.UserID, &p.Created)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return Player{}, ErrNoRecord
+		default:
+			return Player{}, err
+		}
+	}
+
+	return p, nil
+}
+
 func (m *PlayerModel) UpdateName(id int, newName string) error {
 	// Update a name for a given player ID
 
