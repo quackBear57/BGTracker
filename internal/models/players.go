@@ -224,14 +224,21 @@ func (m *PlayerModel) GetUnassigned() ([]Player, error) {
 	return players, nil
 }
 
-func (m *PlayerModel) UpdateUserID(id, userID int) (error) {
+func (m *PlayerModel) UpdateUserID(userID, id int) (error) {
 	// Change user ID assignment for player
-	
-	stmt := `UPDATE players SET user_id = ? WHERE id = ?`
 
-	_, err := m.DB.Exec(stmt, userID, id)
+	// Need to change current player assigned user to 0
+	stmt := `UPDATE players SET user_id = 0 WHERE user_id = ?`
+	_, err := m.DB.Exec(stmt, userID)
 	if err != nil {
-		return nil, err
+		return err
+	}
+
+	// Then update by player id to user ID
+	stmt = `UPDATE players SET user_id = ? WHERE id = ?`
+	_, err = m.DB.Exec(stmt, userID, id)
+	if err != nil {
+		return err
 	}
 
 	return nil
