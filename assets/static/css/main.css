@@ -202,6 +202,15 @@ a.button:hover, input[type="submit"]:hover {
     text-decoration: none;
 }
 
+.mainHeader div {
+    width: 50%;
+    float: left;
+}
+
+.mainHeader div:last-child {
+    text-align: right;
+}
+
 form div {
     margin-bottom: 18px;
 }
