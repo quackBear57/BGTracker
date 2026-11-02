@@ -1,0 +1,32 @@
+{{define "title"}}Games{{end}}
+
+{{define "main"}}
+    <div class="mainHeader">
+        <div><h2>Games</h2></div>
+        {{if .IsAuthenticated}}
+            <div><a href="/games/new">Add Game</a></div>
+        {{end}}
+    </div>
+    {{if .Games}}
+    <table>
+        <tr>
+            <th>Name (Year)</th>
+            <th>Player Min</th>
+            <th>Player Max</th>
+            <th>Time Min</th>
+            <th>Time Max</th>
+        </tr>
+        {{range .Games}}
+        <tr>
+            <td><a href="/games/{{.ID}}">{{.Title}}</a></td>
+            <td>{{.Player_min}}</td>
+            <td>{{.Player_max}}</td>
+            <td>{{.Playtime_min}}</td>
+            <td>{{.Playtime_max}}</td>
+        </tr>
+        {{end}}
+    </table>
+    {{else}}
+        <p>There's nothing here yet!</p>
+    {{end}}
+{{end}}
