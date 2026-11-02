@@ -5,6 +5,8 @@
         <div><h2>Games</h2></div>
         {{if .IsAuthenticated}}
             <div><a href="/games/new">Add Game</a></div>
+        {{else}}
+            <div></div>
         {{end}}
     </div>
     {{if .Games}}
