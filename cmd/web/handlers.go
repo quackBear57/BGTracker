@@ -52,6 +52,11 @@ type userChangeNameForm struct {
 	validator.Validator		`form:"-"`
 }
 
+type playerAssignUserForm struct {
+	PlayerID				int `form:"playerID"`
+	validator.Validator		`form:"-"`
+}
+
 type playerCreateForm struct {
 	Name					string `form:"name"`
 	UserID					int `form:"userID"`
@@ -583,6 +588,56 @@ func (app *application) userChangeNamePost(w http.ResponseWriter, r *http.Reques
 	}
 
 	app.sessionManager.Put(r.Context(), "flash", "Name changed successfully!")
+	
+	http.Redirect(w, r, "/user/account", http.StatusSeeOther)	
+}
+
+func (app *application) playerAssignUser(w http.ResponseWriter, r *http.Request) {
+	players, err := app.players.GetUnassigned()
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	data := app.newTemplateData(r)
+	data.Players = players
+	data.Form = playerAssignUserForm{}
+
+	err = app.render(w, r, http.StatusOK, "playersAssignUser.tmpl.html", data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+}
+
+func (app *application) playerAssignUserPost(w http.ResponseWriter, r *http.Request) {
+	var form playerAssignUserForm
+
+	err := app.decodePostForm(r, &form)
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	id := app.sessionManager.GetInt(r.Context(), "authenticatedUserID")
+
+	err = app.players.UpdateUserID(id, form.PlayerID)
+	if err != nil {
+			app.serverError(w, r, err)
+	}
+
+	if err != nil {
+		form.AddNonFieldError("Unknown error")
+		data := app.newTemplateData(r)
+		data.Form = form
+	
+		err := app.render(w, r, http.StatusUnprocessableEntity,
+			"playersAssignUser.tmpl.html", data)
+		if err != nil {
+			app.serverError(w, r, err)
+		}
+	}
+
+	app.sessionManager.Put(r.Context(), "flash", "Player assigned!")
 	
 	http.Redirect(w, r, "/user/account", http.StatusSeeOther)	
 }
