@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"time"
+	"strconv"
 
 	"bgtracker.ndr54.com/internal/models"
 
@@ -34,7 +35,8 @@ func main() {
 	dsn := flag.String("dsn",
 	"bgtracker_ur:spree-sculpture-commuting@tcp(192.168.0.3:3306)/bgtracker?parseTime=true",
 	"data source name")
-	debug := flag.Bool("debug", false, "Enable debug logs")
+	debug_env, err := strconv.ParseBool(os.Getenv("DEBUG"))
+	debug := flag.Bool("debug", debug_env, "Enable debug logs")
 	flag.Parse()
 
 	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
