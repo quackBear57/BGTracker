@@ -223,3 +223,16 @@ func (m *PlayerModel) GetUnassigned() ([]Player, error) {
 	
 	return players, nil
 }
+
+func (m *PlayerModel) UpdateUserID(id, userID int) (error) {
+	// Change user ID assignment for player
+	
+	stmt := `UPDATE players SET user_id = ? WHERE id = ?`
+
+	_, err := m.DB.Exec(stmt, userID, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return nil
+}
