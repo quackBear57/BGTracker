@@ -2,6 +2,9 @@
 
 {{define "main"}}
     <h2>Available Players</h2>
+    {{range .Form.NonFieldErrors}}
+        <div class="error">{{.}}</div>
+    {{end}}
     {{if .Players}}
     <table>
         <tr>
