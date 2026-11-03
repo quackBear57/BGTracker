@@ -11,7 +11,7 @@
             <codeSmall>Boardgame Geek ID: {{.Bgg_ID}}</codeSmall>
             <spanSmall>Price: {{.Price}}</spanSmall>
         </div>
-        <pre><code>Description: {{.Description}}</code></pre>
+        <pre><code>{{.Description}}</code></pre>
         <div class="minorInfo">
             <codeSmall>State: {{toTitle .State}}</codeSmall>
         </div>
@@ -25,6 +25,9 @@
         </div>
         <div class="minorInfo">
             <codeSmall>Age Min: {{.Age_min}}+</codeSmall>
+        </div>
+        <div class="minorInfo">
+            <codeSmall>Scoresheet link</codeSmall>
         </div>
         <div class="metadata">
             <time>Added: {{humanDate .Added}}</time>

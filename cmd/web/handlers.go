@@ -198,6 +198,14 @@ func (app *application) gameCreatePost(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, fmt.Sprintf("/games/%d", id), http.StatusSeeOther)
 }
 
+func (app *application) gameScoresheet(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Show scoresheet form")
+}
+
+func (app *application) gameScoresheetPost(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Save scoresheet in db")
+}
+
 
 //-----------------------------------------------------------------------------
 // USER FUNCTIONS
