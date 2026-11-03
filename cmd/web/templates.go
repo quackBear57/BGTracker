@@ -18,6 +18,8 @@ type templateData struct {
 	Games				[]models.Game
 	Player				models.Player
 	Players				[]models.Player
+	Session				models.Session
+	sessions			[]models.Session
 	Form				any
 	Flash				string
 	IsAuthenticated		bool
