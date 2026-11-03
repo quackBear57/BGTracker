@@ -68,6 +68,14 @@ type playerChangeNameForm struct {
 	validator.Validator		`form:"-"`
 }
 
+type SessionCreateForm struct {
+	Date					string `form:"date"`
+	Avail_Games				[]string
+	Game					string `form:"game"`
+	Player_Scores			[]models.Player_Score
+	validator.Validator		`form:"-"`
+}
+
 //-----------------------------------------------------------------------------
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
@@ -897,7 +905,33 @@ func (app *application) playersView(w http.ResponseWriter, r *http.Request) {
 // SESSIONS FUNCTIONS
 
 func (app *application) sessionCreate(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Form to create a play session..")
+	data := app.newTemplateData(r)
+	initForm := SessionCreateForm{}
+	initForm.Date = time.Now().Format("2006-01-02") // must be in this format to load
+	initForm.Game = "1 - Game 1"
+	
+	// load games
+
+	games, err := app.games.GetList(50)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+	
+	var g models.Game
+	for _, g = range games {
+		initForm.Avail_Games = append(initForm.Avail_Games, g.Title)
+	}
+
+	ps := models.Player_Score{1,3}
+	initForm.Player_Scores = append(initForm.Player_Scores, ps)
+
+	data.Form = initForm
+
+	err = app.render(w, r, http.StatusOK, "addSession.tmpl.html", data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
 }
 
 func (app *application) sessionCreatePost(w http.ResponseWriter, r *http.Request) {
