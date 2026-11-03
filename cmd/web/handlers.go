@@ -966,7 +966,7 @@ func (app *application) sessionsView(w http.ResponseWriter, r *http.Request) {
 	data := app.newTemplateData(r)
 	data.Sessions = sessions
 
-	err = app.render(w, r, http.StatusOK, "gamesView.tmpl.html", data)
+	err = app.render(w, r, http.StatusOK, "sessionsView.tmpl.html", data)
 	if err != nil {
 		app.serverError(w, r, err)
 	}
