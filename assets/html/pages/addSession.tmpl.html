@@ -1,0 +1,40 @@
+{{define "title"}}Add a Play Session{{end}}
+
+{{define "main"}}
+<form aciton="/sessions/new" method="POST">
+    <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+    <div>
+        <label>Date:</label>
+        <input
+            type="date"
+            name="title"
+            value="{{.Form.Date}}">
+    </div>
+    <div>
+        <label>Game:</label>
+        <select name="game">
+            {{range .Form.Avail_Games}}
+                <option value="{{.}}">{{.}}</option>
+            {{end}}
+        </select>
+    </div>
+    <div>
+        <label>Player | Score</label>
+    </div>
+    <div>
+        {{range .Form.Player_Scores}}
+            <input
+                type="select"
+                name="PlayerScores[0].Player"
+                value="{{.Player_ID}}">
+            <input
+                type="number"
+                name="PlayerScores[0].Score"
+                value="{{.Score}}">
+        {{end}}
+    </div>
+    <!-- <div>
+        <input type="submit" value="Add Session">
+    </div> -->
+</form>
+{{end}}
