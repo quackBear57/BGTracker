@@ -892,3 +892,22 @@ func (app *application) playersView(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, r, err)
 	}
 }
+
+//-----------------------------------------------------------------------------
+// SESSIONS FUNCTIONS
+
+func (app *application) sessionCreate(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Form to create a play session..")
+}
+
+func (app *application) sessionCreatePost(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Submit a new play session..")
+}
+
+func (app *application) sessionView(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "View a specific session")
+}
+
+func (app *application) sessionsView(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "View list of sessions")
+}
