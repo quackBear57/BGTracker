@@ -901,6 +901,19 @@ func (app *application) sessionCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) sessionCreatePost(w http.ResponseWriter, r *http.Request) {
+	var ps, ps2 models.Player_Score
+	var playerScores []models.Player_Score
+
+	ps.Player_ID = 1
+	ps.Score = 99
+
+	ps2.Player_ID = 2
+	ps2.Score = 152
+
+	playerScores = append(playerScores, ps)
+	playerScores = append(playerScores, ps)
+
+	app.sessions.Insert(1, time.Now(), playerScores, 1)
 	fmt.Fprintln(w, "Submit a new play session..")
 }
 

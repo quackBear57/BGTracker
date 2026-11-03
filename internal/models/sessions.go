@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	// "errors"
 	"time"
+	"encoding/json"
+	"fmt"
 )
 
 type Session struct {
@@ -30,6 +32,19 @@ func (m *SessionModel) Insert(gameID int,
 	
 	// stmt := `INSERT INTO play_sessions (date, game_id, winner_id, scores) 
 	// VALUES(?, ?, ?, ?)`
+
+	fmt.Printf("Game ID: %d\n", gameID)
+	fmt.Printf("Date: %s\n", date.Format("02-Jan-2006 15:04"))
+	fmt.Printf("Winner ID: %d\n", winnerID)
+
+	fmt.Println("Json Data:")
+	jsonBytes, _ := json.Marshal(playerScores)
+	fmt.Println(string(jsonBytes))
+
+
+	for _, playerScore := range playerScores{
+		fmt.Printf("Player: %d // Score: %d", playerScore.Player_ID, playerScore.Score)
+	}
 
 	// need to store scores as json??
 
