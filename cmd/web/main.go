@@ -40,13 +40,21 @@ func main() {
 	database_port := os.Getenv("DATABASE_PORT")
 	database_name := os.Getenv("DATABASE_NAME")
 
+	// defaults for testing
+	if database_user == "" {database_user = "bgtracker_ur"}
+	if database_password == "" {database_password = "spree-sculpture-commuting"}
+	if database_url == "" {database_url = "192.168.0.3"}
+	if database_port == "" {database_port = "3306"}
+	if database_name == "" {database_name = "bgtracker"}
+
 	dsn := flag.String("dsn",
 	database_user + ":" + database_password + 
 	"@tcp(" + database_url + ":" + database_port + ")/"  + database_name +
 	"?parseTime=true",
 	"data source name")
 
-	debug_env, err := strconv.ParseBool(os.Getenv("DEBUG"))
+	// debug_env, err := strconv.ParseBool(os.Getenv("DEBUG"))
+	debug_env, err := strconv.ParseBool("true")
 	debug := flag.Bool("debug", debug_env, "Enable debug logs")
 	flag.Parse()
 
