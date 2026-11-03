@@ -200,7 +200,7 @@ func (app *application) gameCreatePost(w http.ResponseWriter, r *http.Request) {
 
 
 //-----------------------------------------------------------------------------
-// UER FUNCTIONS
+// USER FUNCTIONS
 
 func (app *application) userSignup(w http.ResponseWriter, r *http.Request) {
 	data := app.newTemplateData(r)
@@ -956,5 +956,18 @@ func (app *application) sessionView(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) sessionsView(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "View list of sessions")
+	// Default limit of 50, can set links/forms to change this later?
+	sessions, err := app.sessions.GetList(50)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	data := app.newTemplateData(r)
+	data.Sessions = sessions
+
+	err = app.render(w, r, http.StatusOK, "gamesView.tmpl.html", data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
 }
