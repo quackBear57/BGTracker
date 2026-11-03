@@ -2,7 +2,7 @@ package models
 
 import (
 	"database/sql"
-	"errors"
+	// "errors"
 	"time"
 )
 
@@ -23,13 +23,13 @@ type SessionModel struct {
 	DB				*sql.DB
 }
 
-func (m *GameModel) Insert(gameID int,
+func (m *SessionModel) Insert(gameID int,
 	date time.Time,
-	playerScores Player_Scores,
+	playerScores []Player_Score,
 	winnerID int) (int, error) {
 	
-	stmt := `INSERT INTO play_sessions (date, game_id, winner_id, scores) 
-	VALUES(?, ?, ?, ?)`
+	// stmt := `INSERT INTO play_sessions (date, game_id, winner_id, scores) 
+	// VALUES(?, ?, ?, ?)`
 
 	// need to store scores as json??
 
@@ -46,7 +46,7 @@ func (m *GameModel) Insert(gameID int,
 	// 	return 0, err
 	// }
 
-	return int(id), nil
+	return 0, nil
 }
 
 // func (m *GameModel) Get(id int) (Game, error) {
