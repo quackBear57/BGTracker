@@ -46,7 +46,7 @@ func (app *application) routes() http.Handler {
 	mux.Handle("POST /players/assign", protected.ThenFunc(app.playerAssignUserPost))
 	mux.Handle("GET /players/change-name/{id}", protected.ThenFunc(app.playerChangeName))
 	mux.Handle("POST /players/change-name/{id}", protected.ThenFunc(app.playerChangeNamePost))
-	mux.Handle("GET /sessions/new", protected.ThenFunc(app.sessionCreate))
+	mux.Handle("GET /sessions/new", protected.ThenFunc(app.sessionCreatePost))
 	mux.Handle("POST /sessions/new", protected.ThenFunc(app.sessionCreatePost))
 
 	standard := alice.New(app.recoverPanic, app.logRequest, commonHeaders)
