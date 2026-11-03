@@ -30,14 +30,14 @@ func (m *SessionModel) Insert(gameID int,
 	playerScores []Player_Score,
 	winnerID int) (int, error) {
 	
-	// stmt := `INSERT INTO play_sessions (date, game_id, winner_id, scores) 
-	// VALUES(?, ?, ?, ?)`
+	stmt := `INSERT INTO play_sessions (date, game_id, winner_id, scores) 
+	VALUES(?, ?, ?, ?)`
 
-	fmt.Printf("Game ID: %d\n", gameID)
-	fmt.Printf("Date: %s\n", date.Format("02-Jan-2006 15:04"))
-	fmt.Printf("Winner ID: %d\n", winnerID)
+	// fmt.Printf("Game ID: %d\n", gameID)
+	// fmt.Printf("Date: %s\n", date.Format("02-Jan-2006 15:04"))
+	// fmt.Printf("Winner ID: %d\n", winnerID)
 
-	fmt.Println("Json Data:")
+	// fmt.Println("Json Data:")
 	jsonBytes, _ := json.Marshal(playerScores)
 	fmt.Println(string(jsonBytes))
 
@@ -48,18 +48,15 @@ func (m *SessionModel) Insert(gameID int,
 
 	// need to store scores as json??
 
-	// result, err := m.DB.Exec(stmt, title,  bgg_id, price, state, year_pub,
-	// description, player_min, player_max, playtime_min, playtime_max,
-	// age_min, scoring)
+	result, err := m.DB.Exec(stmt, date, gameID, playerScores, winnerID)
+	if err != nil {
+		return 0, err
+	}
 
-	// if err != nil {
-	// 	return 0, err
-	// }
-
-	// id, err := result.LastInsertId()
-	// if err != nil {
-	// 	return 0, err
-	// }
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
 
 	return 0, nil
 }
@@ -139,42 +136,36 @@ func (m *SessionModel) Insert(gameID int,
 // 	return games, nil
 // }
 
-// func (m *GameModel) GetList(limit int) ([]Game, error) {
-// 	stmt := `SELECT id, title, bgg_id, price, added, state, year_pub,
-// 	description, player_min, player_max, playtime_min, playtime_max,
-// 	age_min, scoring FROM games ORDER BY id DESC LIMIT ?`
+func (m *SessionModel) GetList(limit int) ([]Session, error) {
+	stmt := `SELECT id, date, game_id, winner_id, scores
+	FROM play_sessions ORDER BY id DESC LIMIT ?`
 
-// 	rows, err := m.DB.Query(stmt, limit)
-// 	if err != nil {
-// 		return nil, err
-// 	}
+	rows, err := m.DB.Query(stmt, limit)
+	if err != nil {
+		return nil, err
+	}
 
-// 	defer rows.Close()
+	defer rows.Close()
 
-// 	var games []Game
+	var sessions []Session
 
-// 	for rows.Next() {
-// 		var g Game
-// 		var desc_nullstr sql.NullString
+	for rows.Next() {
+		var s Session
+
+
+		// Need to check how to properly unmarshal player scores from json to struct
+		err = rows.Scan(&s.ID, &s.Date, &s.Game_ID, &s.Winner_ID, &s.Player_Scores)
 		
-// 		err = rows.Scan(&g.ID, &g.Title, &g.Bgg_ID, &g.Price, &g.Added, &g.State,
-// 		&g.Year_pub, &desc_nullstr, &g.Player_min, &g.Player_max, &g.Playtime_min,
-// 		&g.Playtime_max, &g.Age_min, &g.Scoring)
-		
-// 		if err != nil {
-// 			return nil, err
-// 		}
+		if err != nil {
+			return nil, err
+		}
 
-// 		if desc_nullstr.Valid {
-// 			g.Description = desc_nullstr.String
-// 		}
+		sessions = append(sessions, s)
+	}
 
-// 		games = append(games, g)
-// 	}
-
-// 	if err = rows.Err(); err != nil {
-// 		return nil, err
-// 	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
 	
-// 	return games, nil
-// }
+	return sessions, nil
+}
