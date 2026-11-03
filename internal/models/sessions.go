@@ -58,7 +58,7 @@ func (m *SessionModel) Insert(gameID int,
 		return 0, err
 	}
 
-	return 0, nil
+	return int(id), nil
 }
 
 // func (m *GameModel) Get(id int) (Game, error) {
