@@ -38,8 +38,8 @@ func (m *SessionModel) Insert(gameID int,
 	// fmt.Printf("Winner ID: %d\n", winnerID)
 
 	// fmt.Println("Json Data:")
-	jsonBytes, _ := json.Marshal(playerScores)
-	fmt.Println(string(jsonBytes))
+	playerScoresJSON, _ := json.Marshal(playerScores)
+	fmt.Println(string(playerScoresJSON))
 
 
 	for _, playerScore := range playerScores{
@@ -48,7 +48,7 @@ func (m *SessionModel) Insert(gameID int,
 
 	// need to store scores as json??
 
-	result, err := m.DB.Exec(stmt, date, gameID, playerScores, winnerID)
+	result, err := m.DB.Exec(stmt, date, gameID, playerScoresJSON, winnerID)
 	if err != nil {
 		return 0, err
 	}
