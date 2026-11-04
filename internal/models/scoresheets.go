@@ -28,22 +28,32 @@ type ScoresheetModel struct {
 func (m *ScoresheetModel) Insert(gameID int, configs []ScoreConfig) (error) {
 	// Save score settings into the scoresheet table
 
+	scoreConfigsJSON, _ := json.Marshal(configs)
+
 	stmt := `INSERT INTO scoresheets (game_id, scoredata, updated)
 	VALUES(?, ?, UTC_TIMESTAMP())`
 
-
-	scoreConfigsJSON, _ := json.Marshal(configs)
-
-	// result, err := m.DB.Exec(stmt, gameID, scoreConfigsJSON)
 	_, err := m.DB.Exec(stmt, gameID, scoreConfigsJSON)
 	if err != nil {
 		return err
 	}
 
-	// id, err := result.LastInsertId()
-	// if err != nil {
-	// 	return err
-	// }
+	return nil
+}
+
+func (m *ScoresheetModel) Update(gameID int, configs []ScoreConfig) (error) {
+	// Update existing scoresheet
+
+	scoreConfigsJSON, _ := json.Marshal(configs)
+
+	stmt := `UPDATE scoresheets 
+	SET scoredata = ?, updated = UTC_TIMESTAMP() 
+	WHERE game_id = ?`
+
+	_, err := m.DB.Exec(stmt, scoreConfigsJSON, gameID)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

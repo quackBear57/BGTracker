@@ -368,14 +368,22 @@ func (app *application) gameScoresheetEditPost(w http.ResponseWriter, r *http.Re
 	}
 
 
-	err = app.scoresheets.Insert(gameID, scoreConfigs)
+	sExists, err := app.scoresheets.ExistsByGame(gameID)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+	if sExists {
+		err = app.scoresheets.Update(gameID, scoreConfigs)
+	} else {
+		err = app.scoresheets.Insert(gameID, scoreConfigs)
+	}
 	
 	if err != nil {
 		app.serverError(w, r, err)
 		return
 	}
 
-	app.sessionManager.Put(r.Context(), "flash", "Scoresheet added successfully!")
+	app.sessionManager.Put(r.Context(), "flash", "Scoresheet saved successfully!")
 
 	http.Redirect(w, r, fmt.Sprintf("/games/%d", gameID), http.StatusSeeOther)
 }
