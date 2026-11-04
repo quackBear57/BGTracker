@@ -33,6 +33,7 @@
         <div class="minorInfo">
             {{if $.Scoresheet.ID}}
                 <a href="/games/{{.ID}}/scoresheet/edit">Edit Scoresheet</a>
+                <spanSmall>Updated: {{humanDate $.Scoresheet.Updated}}</spanSmall>
             {{else}}
                 <codeSmall>No Scoresheet Created Yet</codeSmall>
                 <a class="spanLink" href="/games/{{.ID}}/scoresheet/edit">Create</a>
