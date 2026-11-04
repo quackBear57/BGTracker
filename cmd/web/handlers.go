@@ -83,7 +83,7 @@ type ScoresheetForm struct {
 
 type ScoresheetEditForm struct {
 	Game_ID				int `"-"`
-	ScoreInfo			[]models.ScoreConfig
+	ScoreConfigs		[]models.ScoreConfig
 }
 
 //-----------------------------------------------------------------------------
@@ -150,7 +150,6 @@ func (app *application) gameView(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, r, err)
 	}
 	if sExists {
-		fmt.Println("this shouldn't run")
 		data.Scoresheet, err = app.scoresheets.GetByGame(id)
 		if err != nil {
 			app.serverError(w, r, err)
@@ -258,17 +257,39 @@ func (app *application) gameScoresheetPost(w http.ResponseWriter, r *http.Reques
 }
 
 func (app *application) gameScoresheetEdit(w http.ResponseWriter, r *http.Request) {
+	gameID, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil || gameID < 1 {
+		http.NotFound(w,r)
+		return
+	}
+
 	data := app.newTemplateData(r)
 
-	// Set default values (load any previous data)
+	// Check if a scoresheet exists
+	sExists, err := app.scoresheets.ExistsByGame(gameID)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+	// If so, get the existing data
+	if sExists {
+		data.Scoresheet, err = app.scoresheets.GetByGame(gameID)
+		if err != nil {
+			app.serverError(w, r, err)
+		}
+	} else {						// Or create default values as an example
+		scoreConfig := models.ScoreConfig{
+			Name:			"Rule 1",
+			Description:	"Description",
+			Multiplier:		1,
+		}
+		var scoreConfigs []models.ScoreConfig
+		data.Scoresheet = models.Scoresheet{
+			GameID:			gameID,
+			ScoreConfigs:	append(scoreConfigs, scoreConfig),
+		}
+	}
 
-	// data.Form = ScoresheetEditForm{
-	// 	Year_pub:	time.Now().Year(),
-	// 	Scoring: 	true,
-	// 	State:		"owned",
-	// }
-
-	err := app.render(w, r, http.StatusOK, "scoresheetEdit.tmpl.html", data)
+	err = app.render(w, r, http.StatusOK, "scoresheetEdit.tmpl.html", data)
 	if err != nil {
 		app.serverError(w, r, err)
 	}
