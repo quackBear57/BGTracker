@@ -20,6 +20,7 @@ type templateData struct {
 	Players				[]models.Player
 	Session				models.Session
 	Sessions			[]models.Session
+	Scoresheet			models.Scoresheet
 	Player_Score		models.Player_Score
 	Player_Scores		[]models.Player_Score
 	Form				any
