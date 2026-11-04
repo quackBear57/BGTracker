@@ -9,7 +9,7 @@
         </div>
         <div class="minorInfo">
             <codeSmall>Boardgame Geek ID: {{.Bgg_ID}}</codeSmall>
-            <spanSmall>Price: {{.Price}}</spanSmall>
+            <spanSmall>Price: {{printf "%.2f" .Price}}</spanSmall>
         </div>
         <pre><code>{{.Description}}</code></pre>
         <div class="minorInfo">
