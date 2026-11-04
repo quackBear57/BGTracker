@@ -8,7 +8,11 @@
             <span>#{{.ID}}</span>
         </div>
         <div class="minorInfo">
-            <codeSmall>Boardgame Geek ID: {{.Bgg_ID}}</codeSmall>
+            <codeSmall>Boardgame Geek ID: 
+                <a href="https://boardgamegeek.com/boardgame/{{.Bgg_ID}}/">
+                    {{.Bgg_ID}}
+                </a>
+            </codeSmall>
             <spanSmall>Price: {{printf "%.2f" .Price}}</spanSmall>
         </div>
         <pre><code>{{.Description}}</code></pre>
