@@ -76,9 +76,14 @@ type SessionCreateForm struct {
 	validator.Validator		`form:"-"`
 }
 
+type ScoresheetForm struct {
+	Game_ID				int `"-"`
+	ScoreInfo			[]models.ScoreConfig
+}
+
 type ScoresheetEditForm struct {
 	Game_ID				int `"-"`
-	ScoreInfo			[]string
+	ScoreInfo			[]models.ScoreConfig
 }
 
 //-----------------------------------------------------------------------------
@@ -139,6 +144,18 @@ func (app *application) gameView(w http.ResponseWriter, r *http.Request) {
 
 	data := app.newTemplateData(r)
 	data.Game = game
+
+	sExists, err := app.scoresheets.ExistsByGame(id)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+	if sExists {
+		fmt.Println("this shouldn't run")
+		data.Scoresheet, err = app.scoresheets.GetByGame(id)
+		if err != nil {
+			app.serverError(w, r, err)
+		}
+	}
 
 	err = app.render(w, r, http.StatusOK, "gameView.tmpl.html", data)
 	if err != nil {
@@ -204,17 +221,33 @@ func (app *application) gameCreatePost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) gameScoresheet(w http.ResponseWriter, r *http.Request) {
+	gameID, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil || gameID < 1 {
+		http.NotFound(w,r)
+		return
+	}
+
+	game, err := app.games.Get(gameID)
+	if err != nil {
+		switch {
+		case errors.Is(err, models.ErrNoRecord):
+			http.NotFound(w,r)
+		default:
+			app.serverError(w, r, err)
+		}
+		return
+	}
+	
 	data := app.newTemplateData(r)
+	data.Form = ScoresheetForm{
+		Game_ID:		gameID,
+		ScoreInfo:		[]models.ScoreConfig{},
+	}
+	data.Game = game
 
 	// Load in scoresheet info
 
-	// data.Form = gameCreateForm{
-	// 	Year_pub:	time.Now().Year(),
-	// 	Scoring: 	true,
-	// 	State:		"owned",
-	// }
-
-	err := app.render(w, r, http.StatusOK, "scoresheetView.tmpl.html", data)
+	err = app.render(w, r, http.StatusOK, "scoresheetView.tmpl.html", data)
 	if err != nil {
 		app.serverError(w, r, err)
 	}
