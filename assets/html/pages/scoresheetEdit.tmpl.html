@@ -2,19 +2,94 @@
 
 {{define "main"}}
     <div class="mainHeaderForm">
-            <div><h2>{{.Game.Title}} Scoresheet (Edit)</h2></div>
+            <div><h2>{{.Game.Title}} - Scoresheet</h2></div>
     </div>
     <form action="/games/{{.Game.ID}}/scoresheet/edit" method="POST" novalidate>
         <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
-        {{range $i, $e := .Scoresheet.ScoreConfigs}}
-        <div class="rule-title">Rule {{$i}}:</div>
-        <div class="label-wrap">
-            <label class="rule">Name: </label>
-            <input class="rule inline" type="text" name="rule{{$i}}" value="{{.Name}}">
+        <div id="rules-container">
+            {{range $i, $e := .Scoresheet.ScoreConfigs}}
+            <div class="rule-group" data-index="{{$i}}">
+                <div class="rule-title">Rule {{$i}}</div>
+                <div class="label-wrap">
+                    <label class="rule rule-label">Name: </label>
+                    <input
+                    class="rule rule-text"
+                    type="text"
+                    name="rule{{$i}}_name"
+                    value="{{.Name}}">
+                </div>
+                <div class="label-wrap">
+                    <label class="rule rule-label">Multiplier: </label>
+                    <input
+                    class="rule rule-number"
+                    type="number"
+                    name="rule{{$i}}_multiplier"
+                    value="{{.Multiplier}}"
+                    min="0"
+                    step="0.5">
+                </div>
+                <div class="label-wrap">
+                    <label class="rule rule-label">Short Description: </label>
+                    <input
+                    class="rule rule-text"
+                    type="text"
+                    name="rule{{$i}}_description"
+                    value="{{.Description}}">
+                </div>
+            </div>
+            {{end}}
         </div>
-        {{end}}
+        <div>
+            <button type="button" id="add-rule-button">Add New Rule</button>
+        </div>
         <div>
             <input type="submit" value="Save Scoresheet">
         </div>
     </form>
+
+    <script>
+        document.getElementById("add-rule-button").addEventListener(
+            "Click", function() { 
+                const container = document.getElementById("rules-container");
+                const existingGroups = document.querySeletorAll('.rule-group');
+                const nextIndex = existingGroups.length;
+
+                const ruleDiv = document.createElement("div");
+                ruleDiv.className = "rule-group";
+                ruleDiv.SetAttribute("data-index", nextIndex);
+
+                ruleDiv.innerHTML = `
+                    <div class="rule-title">Rule ${nextIndex}</div>
+                    <div class="label-wrap">
+                        <label class="rule rule-label">Name: </label>
+                        <input
+                        class="rule rule-text"
+                        type="text"
+                        name="rule${nextIndex}_name"
+                        value="">
+                    </div>
+                    <div class="label-wrap">
+                        <label class="rule rule-label">Multiplier: </label>
+                        <input
+                        class="rule rule-number"
+                        type="number"
+                        name="rule${nextIndex}_multiplier"
+                        value="0"
+                        min="0"
+                        step="0.5">
+                    </div>
+                    <div class="label-wrap">
+                        <label class="rule rule-label">Short Description: </label>
+                        <input
+                        class="rule rule-text"
+                        type="text"
+                        name="rule${nextIndex}_description"
+                        value="">
+                    </div>
+                    `;
+                
+                container.appendChild(ruleDiv);
+            }
+        );
+    </script>
 {{end}}
