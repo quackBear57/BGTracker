@@ -258,7 +258,6 @@ form label {
 .rule-title {
     font-size: 120%;
     text-align: center;
-    border-top: 1px solid;
     padding-top: 10px;
 }
 
@@ -273,6 +272,18 @@ form label {
 
 .rule.rule-number {
     width:10%;
+}
+
+.rule-button {
+    display: flex;
+    border-bottom: 1px solid;
+    padding-bottom: 15px;
+    justify-content: center;
+}
+
+.rule-button.left {
+    justify-content: left;
+    border: none;
 }
 
 .error {
