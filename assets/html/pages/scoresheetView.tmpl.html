@@ -1,0 +1,24 @@
+{{define "title"}}Enter Scoresheet{{end}}
+
+{{define "main"}}
+<form action="/games/{id}/scoresheet/" method="POST" novalidate>
+    <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+    <div>
+        <label>Name:</label>
+        {{with .Form.FieldErrors.name}}
+            <label class="error">{{.}}</label>
+        {{end}}
+        <input type="text" name="name" value="{{.Form.Name}}">
+    </div>
+    <div>
+        <label>Associated User ID:</label>
+        {{with .Form.FieldErrors.userID}}
+            <label class="error">{{.}}</label>
+        {{end}}
+        <input type="number" name="userID" value="{{.Form.UserID}}">
+    </div>
+    <div>
+        <input type="submit" value="Add Player">
+    </div>
+</form>
+{{end}}
