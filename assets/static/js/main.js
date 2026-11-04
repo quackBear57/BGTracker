@@ -29,9 +29,9 @@ if (!window.scoresheetInitialized) {
 				const multInput = group.querySelector('input[name$="_multiplier"]');
 				const descInput = group.querySelector('input[name$="_description"]');
 
-				if (nameInput) nameInput.name = 'rule${index}_name';
-				if (multInput) multInput.name = 'rule${index}_multiplier';
-				if (descInput) descInput.name = 'rule${index}_description';
+				if (nameInput) nameInput.name = 'rule' + index + '_name';
+				if (multInput) multInput.name = 'rule' + index + '_multiplier';
+				if (descInput) descInput.name = 'rule' + index + '_description';
 			});
 		}
 		
