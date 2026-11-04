@@ -36,60 +36,19 @@
                     name="rule{{$i}}_description"
                     value="{{.Description}}">
                 </div>
+                <div class="rule-button">
+                    <button type="button" class="delete-rule-button">Delete Rule</button>
+                </div>
             </div>
             {{end}}
         </div>
-        <div>
-            <button type="button" id="add-rule-button">Add New Rule</button>
+        <div class="rule-button left">
+            <button type="button" id="add-rule-button">Add Another Rule</button>
         </div>
-        <div>
+        <div class="rule-button left">
             <input type="submit" value="Save Scoresheet">
         </div>
     </form>
 
-    <script>
-        document.getElementById("add-rule-button").addEventListener(
-            "Click", function() { 
-                const container = document.getElementById("rules-container");
-                const existingGroups = document.querySeletorAll('.rule-group');
-                const nextIndex = existingGroups.length;
-
-                const ruleDiv = document.createElement("div");
-                ruleDiv.className = "rule-group";
-                ruleDiv.SetAttribute("data-index", nextIndex);
-
-                ruleDiv.innerHTML = `
-                    <div class="rule-title">Rule ${nextIndex}</div>
-                    <div class="label-wrap">
-                        <label class="rule rule-label">Name: </label>
-                        <input
-                        class="rule rule-text"
-                        type="text"
-                        name="rule${nextIndex}_name"
-                        value="">
-                    </div>
-                    <div class="label-wrap">
-                        <label class="rule rule-label">Multiplier: </label>
-                        <input
-                        class="rule rule-number"
-                        type="number"
-                        name="rule${nextIndex}_multiplier"
-                        value="0"
-                        min="0"
-                        step="0.5">
-                    </div>
-                    <div class="label-wrap">
-                        <label class="rule rule-label">Short Description: </label>
-                        <input
-                        class="rule rule-text"
-                        type="text"
-                        name="rule${nextIndex}_description"
-                        value="">
-                    </div>
-                    `;
-                
-                container.appendChild(ruleDiv);
-            }
-        );
-    </script>
+    <script src="/static/js/main.js" defer></script>
 {{end}}
