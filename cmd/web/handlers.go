@@ -76,6 +76,11 @@ type SessionCreateForm struct {
 	validator.Validator		`form:"-"`
 }
 
+type ScoresheetEditForm struct {
+	Game_ID				int `"-"`
+	ScoreInfo			[]string
+}
+
 //-----------------------------------------------------------------------------
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
@@ -199,10 +204,44 @@ func (app *application) gameCreatePost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) gameScoresheet(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Show scoresheet form")
+	data := app.newTemplateData(r)
+
+	// Load in scoresheet info
+
+	// data.Form = gameCreateForm{
+	// 	Year_pub:	time.Now().Year(),
+	// 	Scoring: 	true,
+	// 	State:		"owned",
+	// }
+
+	err := app.render(w, r, http.StatusOK, "scoresheetView.tmpl.html", data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
 }
 
 func (app *application) gameScoresheetPost(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Save scoresheet in db")
+}
+
+func (app *application) gameScoresheetEdit(w http.ResponseWriter, r *http.Request) {
+	data := app.newTemplateData(r)
+
+	// Set default values (load any previous data)
+
+	// data.Form = ScoresheetEditForm{
+	// 	Year_pub:	time.Now().Year(),
+	// 	Scoring: 	true,
+	// 	State:		"owned",
+	// }
+
+	err := app.render(w, r, http.StatusOK, "scoresheetEdit.tmpl.html", data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+}
+
+func (app *application) gameScoresheetEditPost(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Save scoresheet in db")
 }
 
