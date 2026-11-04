@@ -27,7 +27,11 @@
             <codeSmall>Age Min: {{.Age_min}}+</codeSmall>
         </div>
         <div class="minorInfo">
-            <codeSmall>Scoresheet link</codeSmall>
+            {{if $.Scoresheet}}
+                <a href="/games/{{.ID}}/scoresheet">Scoresheet</a>
+            {{else}}
+                <codeSmall>Link to create new scoresheet</codeSmall>
+            {{end}}
         </div>
         <div class="metadata">
             <time>Added: {{humanDate .Added}}</time>
