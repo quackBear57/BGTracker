@@ -2,8 +2,9 @@ package models
 
 import (
 	"database/sql"
-	"errors"
-	"encoding/json"
+	// "errors"
+	// "encoding/json"
+	"fmt"
 )
 
 type ScoreConfig struct {
@@ -18,12 +19,17 @@ type ScoreSheet struct {
 	ScoreConfigs	[]ScoreConfig
 }
 
+type ScoresheetModel struct {
+	DB		*sql.DB
+}
+
 func (m *ScoresheetModel) Insert(gameID int, configs ScoreConfig) (int, error) {
 	// Save score settings into the scoresheet table
 
 	stmt := `INSERT INTO scoresheets (game_id, scoredata, updated)
 	VALUES(?, ?, UTC_TIMESTAMP())`
 
+	fmt.Println(stmt)
 
 
 	// result, err := m.DB.Exec(stmt, title,  bgg_id, price, state, year_pub,
@@ -39,5 +45,6 @@ func (m *ScoresheetModel) Insert(gameID int, configs ScoreConfig) (int, error) {
 	// 	return 0, err
 	// }
 
+	return 0, nil
 	// return int(id), nil
 }
