@@ -77,13 +77,15 @@ type SessionCreateForm struct {
 }
 
 type ScoresheetForm struct {
-	Game_ID				int `"-"`
-	ScoreInfo			[]models.ScoreConfig
+	Game_ID					int `"-"`
+	ScoreInfo				[]models.ScoreConfig
+	validator.Validator		`form:"-"`
 }
 
 type ScoresheetEditForm struct {
-	Game_ID				int `"-"`
-	ScoreConfigs		[]models.ScoreConfig
+	Game_ID					int `"-"`
+	ScoreConfigs			[]models.ScoreConfig `"-"`
+	validator.Validator		`form:"-"`
 }
 
 //-----------------------------------------------------------------------------
@@ -308,7 +310,74 @@ func (app *application) gameScoresheetEdit(w http.ResponseWriter, r *http.Reques
 }
 
 func (app *application) gameScoresheetEditPost(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Save scoresheet in db")
+	gameID, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil || gameID < 1 {
+		http.NotFound(w,r)
+		return
+	}
+	
+	var form ScoresheetEditForm
+
+	err = app.decodePostForm(r, &form)
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+
+	// Need to implement checks over variable amount of fields....
+
+	// form.CheckField(validator.NotBlank(form.Title), "title", "This field cannot be blank")
+	// form.CheckField(validator.MaxChars(form.Title, 100), "title", "This field cannot be longer than 100 characters")
+	// form.CheckField(validator.PermittedValue(form.State, "owned", "wanted"), "state", "This field must be either owned or wanted")
+
+
+	if !form.Valid() {
+		data  := app.newTemplateData(r)
+		data.Form = form
+		
+		err := app.render (w, r, http.StatusUnprocessableEntity, "scoresheetEdit.tmpl.html", data)
+		if err != nil {
+			app.serverError(w, r, err)
+		}
+		return
+	}
+
+	var scoreConfigs []models.ScoreConfig
+	i:= 0
+	for {
+		nameKey := fmt.Sprintf("rule%d_name", i)
+		multKey := fmt.Sprintf("rule%d_multiplier", i)
+		descKey := fmt.Sprintf("rule%d_description", i)
+
+		if _, exists := r.Form[nameKey]; !exists {
+			break
+		}
+
+		name := r.FormValue(nameKey)
+		multiplier, _ := strconv.ParseFloat(r.FormValue(multKey), 64)
+		description := r.FormValue(descKey)
+
+		scoreConfigs = append(scoreConfigs, models.ScoreConfig{
+			Name:			name,
+			Multiplier:		multiplier,
+			Description:	description,
+		})
+
+		i++
+	}
+
+
+	err = app.scoresheets.Insert(gameID, scoreConfigs)
+	
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	app.sessionManager.Put(r.Context(), "flash", "Scoresheet added successfully!")
+
+	http.Redirect(w, r, fmt.Sprintf("/games/%d", gameID), http.StatusSeeOther)
 }
 
 

@@ -25,27 +25,27 @@ type ScoresheetModel struct {
 	DB		*sql.DB
 }
 
-func (m *ScoresheetModel) Insert(gameID int, configs ScoreConfig) (int, error) {
+func (m *ScoresheetModel) Insert(gameID int, configs []ScoreConfig) (error) {
 	// Save score settings into the scoresheet table
 
 	stmt := `INSERT INTO scoresheets (game_id, scoredata, updated)
 	VALUES(?, ?, UTC_TIMESTAMP())`
 
-	fmt.Println(stmt)
 
 	scoreConfigsJSON, _ := json.Marshal(configs)
 
-	result, err := m.DB.Exec(stmt, gameID, scoreConfigsJSON)
+	// result, err := m.DB.Exec(stmt, gameID, scoreConfigsJSON)
+	_, err := m.DB.Exec(stmt, gameID, scoreConfigsJSON)
 	if err != nil {
-		return 0, err
+		return err
 	}
 
-	id, err := result.LastInsertId()
-	if err != nil {
-		return 0, err
-	}
+	// id, err := result.LastInsertId()
+	// if err != nil {
+	// 	return err
+	// }
 
-	return int(id), nil
+	return nil
 }
 
 func (m *ScoresheetModel) GetByGame(gameID int) (Scoresheet, error) {
@@ -70,7 +70,7 @@ func (m *ScoresheetModel) GetByGame(gameID int) (Scoresheet, error) {
 	}
 
 	if len(scoreConfigsJSON) > 0 {
-		err = json.Unmarshal(scoreConfigsJSON, s.ScoreConfigs)
+		err = json.Unmarshal(scoreConfigsJSON, &s.ScoreConfigs)
 		if err != nil {
 			fmt.Println("Error in unmarshal JSON")
 			return Scoresheet{}, err
