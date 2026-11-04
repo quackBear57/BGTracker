@@ -2,7 +2,3 @@
 
 App to track board games, written in Go. Following along via the Let's Go 
 Professional Package.
-
-
-### Ignore
-Current progress: Guided Exercises - change pass
