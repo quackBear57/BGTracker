@@ -68,6 +68,26 @@ type playerChangeNameForm struct {
 	validator.Validator		`form:"-"`
 }
 
+type SessionCreateForm struct {
+	Date					string `form:"date"`
+	Avail_Games				[]string
+	Game					string `form:"game"`
+	Player_Scores			[]models.Player_Score
+	validator.Validator		`form:"-"`
+}
+
+type ScoresheetForm struct {
+	Game_ID					int `"-"`
+	ScoreInfo				[]models.ScoreConfig
+	validator.Validator		`form:"-"`
+}
+
+type ScoresheetEditForm struct {
+	Game_ID					int `"-"`
+	ScoreConfigs			[]models.ScoreConfig `"-"`
+	validator.Validator		`form:"-"`
+}
+
 //-----------------------------------------------------------------------------
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
@@ -126,6 +146,17 @@ func (app *application) gameView(w http.ResponseWriter, r *http.Request) {
 
 	data := app.newTemplateData(r)
 	data.Game = game
+
+	sExists, err := app.scoresheets.ExistsByGame(id)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+	if sExists {
+		data.Scoresheet, err = app.scoresheets.GetByGame(id)
+		if err != nil {
+			app.serverError(w, r, err)
+		}
+	}
 
 	err = app.render(w, r, http.StatusOK, "gameView.tmpl.html", data)
 	if err != nil {
@@ -190,9 +221,176 @@ func (app *application) gameCreatePost(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, fmt.Sprintf("/games/%d", id), http.StatusSeeOther)
 }
 
+func (app *application) gameScoresheet(w http.ResponseWriter, r *http.Request) {
+	gameID, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil || gameID < 1 {
+		http.NotFound(w,r)
+		return
+	}
+
+	game, err := app.games.Get(gameID)
+	if err != nil {
+		switch {
+		case errors.Is(err, models.ErrNoRecord):
+			http.NotFound(w,r)
+		default:
+			app.serverError(w, r, err)
+		}
+		return
+	}
+	
+	data := app.newTemplateData(r)
+	data.Form = ScoresheetForm{
+		Game_ID:		gameID,
+		ScoreInfo:		[]models.ScoreConfig{},
+	}
+	data.Game = game
+
+	// Load in scoresheet info
+
+	err = app.render(w, r, http.StatusOK, "scoresheetView.tmpl.html", data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+}
+
+func (app *application) gameScoresheetPost(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Save scoresheet in db")
+}
+
+func (app *application) gameScoresheetEdit(w http.ResponseWriter, r *http.Request) {
+	gameID, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil || gameID < 1 {
+		http.NotFound(w,r)
+		return
+	}
+
+	game, err := app.games.Get(gameID)
+	if err != nil {
+		switch {
+		case errors.Is(err, models.ErrNoRecord):
+			http.NotFound(w,r)
+		default:
+			app.serverError(w, r, err)
+		}
+		return
+	}
+
+	data := app.newTemplateData(r)
+	data.Game = game
+
+	// Check if a scoresheet exists
+	sExists, err := app.scoresheets.ExistsByGame(gameID)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+	// If so, get the existing data
+	if sExists {
+		data.Scoresheet, err = app.scoresheets.GetByGame(gameID)
+		if err != nil {
+			app.serverError(w, r, err)
+		}
+	} else {						// Or create default values as an example
+		scoreConfig := models.ScoreConfig{
+			Name:			"Rule 1",
+			Description:	"Description",
+			Multiplier:		1,
+		}
+		var scoreConfigs []models.ScoreConfig
+		data.Scoresheet = models.Scoresheet{
+			GameID:			gameID,
+			ScoreConfigs:	append(scoreConfigs, scoreConfig),
+		}
+	}
+
+	err = app.render(w, r, http.StatusOK, "scoresheetEdit.tmpl.html", data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+}
+
+func (app *application) gameScoresheetEditPost(w http.ResponseWriter, r *http.Request) {
+	gameID, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil || gameID < 1 {
+		http.NotFound(w,r)
+		return
+	}
+	
+	var form ScoresheetEditForm
+
+	err = app.decodePostForm(r, &form)
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+
+	// Need to implement checks over variable amount of fields....
+
+	// form.CheckField(validator.NotBlank(form.Title), "title", "This field cannot be blank")
+	// form.CheckField(validator.MaxChars(form.Title, 100), "title", "This field cannot be longer than 100 characters")
+	// form.CheckField(validator.PermittedValue(form.State, "owned", "wanted"), "state", "This field must be either owned or wanted")
+
+
+	if !form.Valid() {
+		data  := app.newTemplateData(r)
+		data.Form = form
+		
+		err := app.render (w, r, http.StatusUnprocessableEntity, "scoresheetEdit.tmpl.html", data)
+		if err != nil {
+			app.serverError(w, r, err)
+		}
+		return
+	}
+
+	var scoreConfigs []models.ScoreConfig
+	i:= 0
+	for {
+		nameKey := fmt.Sprintf("rule%d_name", i)
+		multKey := fmt.Sprintf("rule%d_multiplier", i)
+		descKey := fmt.Sprintf("rule%d_description", i)
+
+		if _, exists := r.Form[nameKey]; !exists {
+			break
+		}
+
+		name := r.FormValue(nameKey)
+		multiplier, _ := strconv.ParseFloat(r.FormValue(multKey), 64)
+		description := r.FormValue(descKey)
+
+		scoreConfigs = append(scoreConfigs, models.ScoreConfig{
+			Name:			name,
+			Multiplier:		multiplier,
+			Description:	description,
+		})
+
+		i++
+	}
+
+
+	sExists, err := app.scoresheets.ExistsByGame(gameID)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+	if sExists {
+		err = app.scoresheets.Update(gameID, scoreConfigs)
+	} else {
+		err = app.scoresheets.Insert(gameID, scoreConfigs)
+	}
+	
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	app.sessionManager.Put(r.Context(), "flash", "Scoresheet saved successfully!")
+
+	http.Redirect(w, r, fmt.Sprintf("/games/%d", gameID), http.StatusSeeOther)
+}
+
 
 //-----------------------------------------------------------------------------
-// UER FUNCTIONS
+// USER FUNCTIONS
 
 func (app *application) userSignup(w http.ResponseWriter, r *http.Request) {
 	data := app.newTemplateData(r)
@@ -888,6 +1086,77 @@ func (app *application) playersView(w http.ResponseWriter, r *http.Request) {
 	data.Players = players
 
 	err = app.render(w, r, http.StatusOK, "playersView.tmpl.html", data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+}
+
+//-----------------------------------------------------------------------------
+// SESSIONS FUNCTIONS
+
+func (app *application) sessionCreate(w http.ResponseWriter, r *http.Request) {
+	data := app.newTemplateData(r)
+	initForm := SessionCreateForm{}
+	initForm.Date = time.Now().Format("2006-01-02") // must be in this format to load
+	initForm.Game = "1 - Game 1"
+	
+	// load games
+
+	games, err := app.games.GetList(50)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+	
+	var g models.Game
+	for _, g = range games {
+		initForm.Avail_Games = append(initForm.Avail_Games, g.Title)
+	}
+
+	ps := models.Player_Score{1,3}
+	initForm.Player_Scores = append(initForm.Player_Scores, ps)
+
+	data.Form = initForm
+
+	err = app.render(w, r, http.StatusOK, "addSession.tmpl.html", data)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+}
+
+func (app *application) sessionCreatePost(w http.ResponseWriter, r *http.Request) {
+	var ps, ps2 models.Player_Score
+	var playerScores []models.Player_Score
+
+	ps.Player_ID = 1
+	ps.Score = 99
+
+	ps2.Player_ID = 2
+	ps2.Score = 152
+
+	playerScores = append(playerScores, ps)
+	playerScores = append(playerScores, ps)
+
+	app.sessions.Insert(1, time.Now(), playerScores, 1)
+	fmt.Fprintln(w, "Submit a new play session..")
+}
+
+func (app *application) sessionView(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "View a specific session")
+}
+
+func (app *application) sessionsView(w http.ResponseWriter, r *http.Request) {
+	// Default limit of 50, can set links/forms to change this later?
+	sessions, err := app.sessions.GetList(50)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	data := app.newTemplateData(r)
+	data.Sessions = sessions
+
+	err = app.render(w, r, http.StatusOK, "sessionsView.tmpl.html", data)
 	if err != nil {
 		app.serverError(w, r, err)
 	}

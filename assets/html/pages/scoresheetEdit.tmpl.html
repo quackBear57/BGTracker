@@ -1,0 +1,54 @@
+{{define "title"}}Edit Scoresheet{{end}}
+
+{{define "main"}}
+    <div class="mainHeaderForm">
+            <div><h2>{{.Game.Title}} - Scoresheet</h2></div>
+    </div>
+    <form action="/games/{{.Game.ID}}/scoresheet/edit" method="POST" novalidate>
+        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+        <div id="rules-container">
+            {{range $i, $e := .Scoresheet.ScoreConfigs}}
+            <div class="rule-group" data-index="{{$i}}">
+                <div class="rule-title">Rule {{$i}}</div>
+                <div class="label-wrap">
+                    <label class="rule rule-label">Name: </label>
+                    <input
+                    class="rule rule-text"
+                    type="text"
+                    name="rule{{$i}}_name"
+                    value="{{.Name}}">
+                </div>
+                <div class="label-wrap">
+                    <label class="rule rule-label">Multiplier: </label>
+                    <input
+                    class="rule rule-number"
+                    type="number"
+                    name="rule{{$i}}_multiplier"
+                    value="{{.Multiplier}}"
+                    min="0"
+                    step="0.5">
+                </div>
+                <div class="label-wrap">
+                    <label class="rule rule-label">Short Description: </label>
+                    <input
+                    class="rule rule-text"
+                    type="text"
+                    name="rule{{$i}}_description"
+                    value="{{.Description}}">
+                </div>
+                <div class="rule-button">
+                    <button type="button" class="delete-rule-button">Delete Rule</button>
+                </div>
+            </div>
+            {{end}}
+        </div>
+        <div class="rule-button left">
+            <button type="button" id="add-rule-button">Add Another Rule</button>
+        </div>
+        <div class="rule-button left">
+            <input type="submit" value="Save Scoresheet">
+        </div>
+    </form>
+
+    <script src="/static/js/main.js" defer></script>
+{{end}}

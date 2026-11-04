@@ -215,9 +215,9 @@ form div {
     margin-bottom: 18px;
 }
 
-form div:last-child {
+/*form div:last-child {
     border-top: 1px dashed var(--medium-gray);
-}
+}*/
 
 form input[type="radio"] {
     margin-left: 18px;
@@ -228,7 +228,7 @@ form input[type="text"], form input[type="password"], form input[type="email"] {
     width: 100%;
 }
 
-form input[type=text], form input[type="password"], form input[type="email"], textarea {
+form input[type=text], form input[type="password"], form input[type="email"], form input[type="number"], textarea {
     color: var(--dark-blue);
     background: var(--light-gray);
     border: 1px solid var(--borderColor);
@@ -238,6 +238,52 @@ form input[type=text], form input[type="password"], form input[type="email"], te
 form label {
     display: inline-block;
     margin-bottom: 9px;
+}
+
+.label-wrap {
+    display: flex;
+}
+
+.rule-label {
+    display: flex;
+    align-self: center;
+    justify-content: right;
+    width: 190px;
+    text-align: right;
+    font-size: 90%;
+    padding-right:5px;
+    padding-top:5px;
+}
+
+.rule-title {
+    font-size: 120%;
+    text-align: center;
+    padding-top: 10px;
+}
+
+.rule.rule-text, .rule.rule-number{
+    font-size: 90%;
+    padding: .5em;
+}
+
+.rule.rule-text {
+    width: 60%;    
+}
+
+.rule.rule-number {
+    width:10%;
+}
+
+.rule-button {
+    display: flex;
+    border-bottom: 1px solid;
+    padding-bottom: 15px;
+    justify-content: center;
+}
+
+.rule-button.left {
+    justify-content: left;
+    border: none;
 }
 
 .error {

@@ -8,10 +8,14 @@
             <span>#{{.ID}}</span>
         </div>
         <div class="minorInfo">
-            <codeSmall>Boardgame Geek ID: {{.Bgg_ID}}</codeSmall>
-            <spanSmall>Price: {{.Price}}</spanSmall>
+            <codeSmall>Boardgame Geek ID: 
+                <a href="https://boardgamegeek.com/boardgame/{{.Bgg_ID}}/">
+                    {{.Bgg_ID}}
+                </a>
+            </codeSmall>
+            <spanSmall>Price: {{printf "%.2f" .Price}}</spanSmall>
         </div>
-        <pre><code>Description: {{.Description}}</code></pre>
+        <pre><code>{{.Description}}</code></pre>
         <div class="minorInfo">
             <codeSmall>State: {{toTitle .State}}</codeSmall>
         </div>
@@ -25,6 +29,15 @@
         </div>
         <div class="minorInfo">
             <codeSmall>Age Min: {{.Age_min}}+</codeSmall>
+        </div>
+        <div class="minorInfo">
+            {{if $.Scoresheet.ID}}
+                <a href="/games/{{.ID}}/scoresheet/edit">Edit Scoresheet</a>
+                <spanSmall>Updated: {{humanDate $.Scoresheet.Updated}}</spanSmall>
+            {{else}}
+                <codeSmall>No Scoresheet Created Yet</codeSmall>
+                <a class="spanLink" href="/games/{{.ID}}/scoresheet/edit">Create</a>
+            {{end}}
         </div>
         <div class="metadata">
             <time>Added: {{humanDate .Added}}</time>

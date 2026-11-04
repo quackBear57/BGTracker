@@ -18,6 +18,11 @@ type templateData struct {
 	Games				[]models.Game
 	Player				models.Player
 	Players				[]models.Player
+	Session				models.Session
+	Sessions			[]models.Session
+	Scoresheet			models.Scoresheet
+	Player_Score		models.Player_Score
+	Player_Scores		[]models.Player_Score
 	Form				any
 	Flash				string
 	IsAuthenticated		bool
@@ -27,7 +32,7 @@ type templateData struct {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 func humanDate(t time.Time) string {
-	return t.Format("02 Jan 2006 at 15:04")
+	return t.In(time.Local).Format("02 Jan 2006 at 15:04")
 }
 
 var functions = template.FuncMap{

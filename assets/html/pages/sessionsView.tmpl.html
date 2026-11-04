@@ -1,0 +1,32 @@
+{{define "title"}}Play Sessions{{end}}
+
+{{define "main"}}
+    <div class="mainHeader">
+        <div><h2>Sessions</h2></div>
+        {{if .IsAuthenticated}}
+            <div><a href="/sessions/new">Log Play Session</a></div>
+        {{else}}
+            <div></div>
+        {{end}}
+    </div>
+    {{if .Sessions}}
+    <table>
+        <tr>
+            <th>Name (Year)</th>
+            <th class="col_set_w">Players</th>
+            <th class="col_set_w">Time (min)</th>
+            <th>ID</th>
+        </tr>
+        {{range .Sessions}}
+        <tr>
+            <td><a href="/games/{{.ID}}">{{.Title}} ({{.Year_pub}})</a></td>
+            <td class="center">{{.Player_min}} - {{.Player_max}}</td>
+            <td class="center">{{.Playtime_min}} - {{.Playtime_max}}</td>
+            <td>{{.ID}}</td>
+        </tr>
+        {{end}}
+    </table>
+    {{else}}
+        <p>There's nothing here yet!</p>
+    {{end}}
+{{end}}
