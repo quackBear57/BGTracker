@@ -240,6 +240,15 @@ form label {
     margin-bottom: 9px;
 }
 
+.label-wrap {
+    display: flex;
+}
+
+.rule label {
+    display: flex;
+    align-self: center;
+}
+
 .error {
     color: var(--errorColor);
     font-weight: bold;

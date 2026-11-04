@@ -1,24 +1,20 @@
 {{define "title"}}Edit Scoresheet{{end}}
 
 {{define "main"}}
-<form action="/games/{id}/scoresheet/edit" method="POST" novalidate>
-    <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
-    <div>
-        <label>Name:</label>
-        {{with .Form.FieldErrors.name}}
-            <label class="error">{{.}}</label>
+    <div class="mainHeaderForm">
+            <div><h2>{{.Game.Title}} Scoresheet (Edit)</h2></div>
+    </div>
+    <form action="/games/{{.Game.ID}}/scoresheet/edit" method="POST" novalidate>
+        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+        {{range $i, $e := .Scoresheet.ScoreConfigs}}
+        <div class="rule-title">Rule {{$i}}:</div>
+        <div class="label-wrap">
+            <label class="rule">Name: </label>
+            <input class="rule inline" type="text" name="rule{{$i}}" value="{{.Name}}">
+        </div>
         {{end}}
-        <input type="text" name="name" value="{{.Form.Name}}">
-    </div>
-    <div>
-        <label>Associated User ID:</label>
-        {{with .Form.FieldErrors.userID}}
-            <label class="error">{{.}}</label>
-        {{end}}
-        <input type="number" name="userID" value="{{.Form.UserID}}">
-    </div>
-    <div>
-        <input type="submit" value="Add Player">
-    </div>
-</form>
+        <div>
+            <input type="submit" value="Save Scoresheet">
+        </div>
+    </form>
 {{end}}
