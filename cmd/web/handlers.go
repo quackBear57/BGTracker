@@ -263,7 +263,19 @@ func (app *application) gameScoresheetEdit(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
+	game, err := app.games.Get(gameID)
+	if err != nil {
+		switch {
+		case errors.Is(err, models.ErrNoRecord):
+			http.NotFound(w,r)
+		default:
+			app.serverError(w, r, err)
+		}
+		return
+	}
+
 	data := app.newTemplateData(r)
+	data.Game = game
 
 	// Check if a scoresheet exists
 	sExists, err := app.scoresheets.ExistsByGame(gameID)
