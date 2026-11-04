@@ -28,9 +28,10 @@
         </div>
         <div class="minorInfo">
             {{if $.Scoresheet.ID}}
-                <a href="/games/{{.ID}}/scoresheet">Scoresheet</a>
+                <a href="/games/{{.ID}}/scoresheet/edit">Edit Scoresheet</a>
             {{else}}
-                <codeSmall>Link to create new scoresheet</codeSmall>
+                <codeSmall>No Scoresheet Created Yet</codeSmall>
+                <a class="spanLink" href="/games/{{.ID}}/scoresheet/edit">Create</a>
             {{end}}
         </div>
         <div class="metadata">
