@@ -1094,24 +1094,61 @@ func (app *application) playersView(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) sessionCreate(w http.ResponseWriter, r *http.Request) {
 	data := app.newTemplateData(r)
-	initForm := SessionCreateForm{}
-	initForm.Date = time.Now().Format("2006-01-02") // must be in this format to load
-	initForm.Game = "1 - Game 1"
-	
-	// load games
 
-	games, err := app.games.GetList(50)
+	gameID, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil || gameID < 1 {
+		http.NotFound(w,r)
+		return
+	}
+
+	game, err := app.games.Get(gameID)
 	if err != nil {
 		app.serverError(w, r, err)
 		return
 	}
-	
-	var g models.Game
-	for _, g = range games {
-		initForm.Avail_Games = append(initForm.Avail_Games, g.Title)
+	data.Game = game
+
+	// Check is scoresheet exists
+	sExists, err := app.scoresheets.ExistsByGame(gameID)
+	if err != nil {
+		app.serverError(w, r, err)
+	}
+	// If so, get the existing data
+	if sExists {
+		scoresheet, err := app.scoresheets.GetByGame(gameID)
+		if err != nil {
+			app.serverError(w, r, err)
+		}
+		data.Scoresheet = scoresheet
+	// } else {						// Or create default values as an example
+		// scoreConfig := models.ScoreConfig{
+		// 	Name:			"Rule 1",
+		// 	Description:	"Description",
+		// 	Multiplier:		1,
+		// }
+		// var scoreConfigs []models.ScoreConfig
+		// scoresheet = models.Scoresheet{
+		// 	GameID:			gameID,
+		// 	ScoreConfigs:	append(scoreConfigs, scoreConfig),
+		// }
 	}
 
-	ps := models.Player_Score{1,3}
+	initForm := SessionCreateForm{}
+	initForm.Date = time.Now().Format("2006-01-02") // must be in this format to load
+	data.Form = initForm
+
+
+	// Get list of available players to pass on as drop down
+	
+	// temporary place holder
+	players, err := app.players.GetList(50)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+	data.Players = players
+
+	ps := models.Player_Score{0, 0}
 	initForm.Player_Scores = append(initForm.Player_Scores, ps)
 
 	data.Form = initForm
