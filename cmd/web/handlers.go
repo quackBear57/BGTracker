@@ -324,13 +324,11 @@ func (app *application) gameScoresheetEditPost(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-
 	// Need to implement checks over variable amount of fields....
 
 	// form.CheckField(validator.NotBlank(form.Title), "title", "This field cannot be blank")
 	// form.CheckField(validator.MaxChars(form.Title, 100), "title", "This field cannot be longer than 100 characters")
 	// form.CheckField(validator.PermittedValue(form.State, "owned", "wanted"), "state", "This field must be either owned or wanted")
-
 
 	if !form.Valid() {
 		data  := app.newTemplateData(r)
@@ -344,7 +342,7 @@ func (app *application) gameScoresheetEditPost(w http.ResponseWriter, r *http.Re
 	}
 
 	var scoreConfigs []models.ScoreConfig
-	i:= 0
+	i := 0
 	for {
 		nameKey := fmt.Sprintf("rule%d_name", i)
 		multKey := fmt.Sprintf("rule%d_multiplier", i)
