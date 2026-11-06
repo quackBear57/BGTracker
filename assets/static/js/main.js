@@ -23,7 +23,7 @@ if (!window.scoresheetInitialized) {
 				group.setAttribute('data-index', index);
 
 				const titleEl = group.querySelector(".rule-title");
-				if (titleEl) titleEl.textContent = 'Rule ' + index;
+				if (titleEl) titleEl.textContent = 'Rule ' + (index + 1) ;
 
 				const nameInput = group.querySelector('input[name$="_name"]');
 				const multInput = group.querySelector('input[name$="_multiplier"]');
@@ -44,7 +44,7 @@ if (!window.scoresheetInitialized) {
 			ruleDiv.setAttribute("data-index", nextIndex);
 
 			ruleDiv.innerHTML = `
-				<div class="rule-title">Rule ${nextIndex}</div>
+				<div class="rule-title">Rule ${nextIndex + 1}</div>
 				<div class="label-wrap">
 					<label class="rule rule-label">Name: </label>
 					<input
@@ -61,6 +61,7 @@ if (!window.scoresheetInitialized) {
 					name="rule${nextIndex}_multiplier"
 					value="0"
 					min="0"
+					max="20"
 					step="0.5">
 				</div>
 				<div class="label-wrap">
