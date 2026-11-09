@@ -38,6 +38,11 @@ func humanDate(t time.Time) string {
 var functions = template.FuncMap{
 	"humanDate" : humanDate,
 	"toTitle"	: strings.Title,
+	"add"		: add,
+}
+
+func add(a, b int) int {
+	return a + b
 }
 
 func newTemplateCache() (map[string]*template.Template, error) {

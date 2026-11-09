@@ -286,6 +286,49 @@ form label {
     border: none;
 }
 
+.score {
+    display: flex;
+    align-self: center;
+    justify-content: center;
+    width: 300px;
+    text-align: right;
+    padding-right:5px;
+    padding-top:5px;
+}
+
+.score.score-label.date {
+    display: inline-block;
+    text-align: center;
+    font-size: 110%;
+    font-weight: bold;
+}
+
+.score.score-date {
+    width: 75%;
+    text-align: center;
+    color: var(--dark-blue);
+    background: var(--light-gray);
+    border: 1px solid var(--borderColor);
+    border-radius: 3px;
+}
+
+.date-wrap {
+    padding-bottom: 10px;
+}
+
+.score.score-select {
+    width: 75%;
+    text-align: left;
+    color: var(--dark-blue);
+    background: var(--light-gray);
+    border: 1px solid var(--borderColor);
+    border-radius: 3px;
+}
+
+.score.score-number {
+    width: 75%;
+}
+
 .error {
     color: var(--errorColor);
     font-weight: bold;

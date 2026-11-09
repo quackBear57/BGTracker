@@ -1,37 +1,59 @@
 {{define "title"}}Add a Play Session{{end}}
 
 {{define "main"}}
+<h2>{{.Game.Title}} - Play</h2>
+
 <form aciton="/sessions/new" method="POST">
     <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
-    <div>
-        <label>Date:</label>
-        <input
+    <div class="date-wrap">
+        <label class="score score-label date">Date</label>
+        <div class="score">
+            <input
             type="date"
             name="title"
-            value="{{.Form.Date}}">
+            value="{{.Form.Date}}"
+            class="score score-date">
+        </div>
     </div>
-    <div>
-        <label>Game:</label>
-        <select name="game">
-            {{range .Form.Avail_Games}}
-                <option value="{{.}}">{{.}}</option>
-            {{end}}
-        </select>
+    <div class="label-wrap">
+        <div class="score score-label">Player</div>
+        <div class="score score-label">Score</div>
     </div>
-    <div>
-        <label>Player | Score</label>
-    </div>
-    <div>
-        {{range .Form.Player_Scores}}
-            <input
-                type="select"
-                name="PlayerScores[0].Player"
-                value="{{.Player_ID}}">
-            <input
-                type="number"
-                name="PlayerScores[0].Score"
-                value="{{.Score}}">
+    <div id="players-container">
+        {{if .Scoresheet.ID}}
+            <div class="label-wrap">
+                    Scoresheet scoring
+            </div>
+        {{else}}
+            <div class="player-group" data-index="0">
+                <div class="label-wrap">
+                            <div class="score">
+                                <select name="PlayerScores0_name" class="score score-select">
+                                    {{range .Players}}
+                                        <option
+                                        value="{{.ID}}">
+                                        {{.ID}} - {{.Name}}
+                                        </option>
+                                    {{end}}
+                                </select>
+                            </div>
+                            <div class="score">
+                                <input
+                                    type="number"
+                                    name="PlayerScores0_score"
+                                    class="score score-number"
+                                    value="0">
+                            </div>
+                </div>
+            </div>
+            <div class="rule-button left">
+                <button type="button" id="add-player-button">Add Another Player</button>
+            </div>
+            
         {{end}}
+    </div>
+    <div class="rule-button left">
+            <input type="submit" value="Save Session">
     </div>
     <!-- <div>
         <input type="submit" value="Add Session">
