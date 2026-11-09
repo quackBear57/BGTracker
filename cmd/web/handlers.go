@@ -69,10 +69,11 @@ type playerChangeNameForm struct {
 }
 
 type SessionCreateForm struct {
-	Date                string `form:"date"`
-	Avail_Games         []string
-	Game                string `form:"game"`
-	Player_Scores       []models.Player_Score
+	Date                string                `form:"date"`
+	Avail_Games         []string              `form:"-"`
+	Game                string                `form:"-"`
+	Players             []models.Player       `form:"-"`
+	Player_Scores       []models.Player_Score `form:"-"`
 	validator.Validator `form:"-"`
 }
 
