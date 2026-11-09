@@ -331,6 +331,10 @@ form label {
     width: 75%;
 }
 
+.score-button {
+    align-self: center;
+}
+
 .error {
     color: var(--errorColor);
     font-weight: bold;
