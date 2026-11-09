@@ -314,6 +314,8 @@ form label {
 
 .date-wrap {
     padding-bottom: 10px;
+    display: flex;
+    flex-direction: column;
 }
 
 .score.score-select {
