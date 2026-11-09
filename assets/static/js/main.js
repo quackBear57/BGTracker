@@ -82,10 +82,15 @@ if (!window.scoresheetInitialized) {
 
 		container.addEventListener('click', function(e) {
 			if (e.target && e.target.classList.contains('delete-rule-button')) {
-				const group = e.target.closest('.rule-group');
-				if (group) {
-					group.remove();
-					updateRuleIndices();
+				const groups = document.querySelectorAll('.rule-group')
+				if (groups.length == 1) {
+					alert("Can't delete last rule")
+				} else {
+					const group = e.target.closest('.rule-group');
+					if (group) {
+						group.remove();
+						updateRuleIndices();
+					}
 				}
 			}
 		});
