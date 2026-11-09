@@ -12,80 +12,80 @@ import (
 )
 
 type gameCreateForm struct {
-	Title					string `form:"title"`
-	Bgg_id					int `form:"bgg_id"`
-	Year_pub				int `form:"year_pub"`
-	Description				string	`form:"description"`
-	Price					float64 `form:"price"`
-	Player_min				int `form:"player_min"`
-	Player_max				int `form:"player_max"`
-	Playtime_min			int `form:"playtime_min"`
-	Playtime_max			int `form:"playtime_max"`
-	Age_min					int `form:"age_min"`
-	Scoring					bool `form:"scoring"`
-	State					string `form:"state"`
-	validator.Validator		`form:"-"`
+	Title               string  `form:"title"`
+	Bgg_id              int     `form:"bgg_id"`
+	Year_pub            int     `form:"year_pub"`
+	Description         string  `form:"description"`
+	Price               float64 `form:"price"`
+	Player_min          int     `form:"player_min"`
+	Player_max          int     `form:"player_max"`
+	Playtime_min        int     `form:"playtime_min"`
+	Playtime_max        int     `form:"playtime_max"`
+	Age_min             int     `form:"age_min"`
+	Scoring             bool    `form:"scoring"`
+	State               string  `form:"state"`
+	validator.Validator `form:"-"`
 }
 
 type userSignupForm struct {
-	Name					string `form:"name"`
-	Email					string `form:"email"`
-	Password				string `form:"password"`
-	validator.Validator		`form:"-"`
+	Name                string `form:"name"`
+	Email               string `form:"email"`
+	Password            string `form:"password"`
+	validator.Validator `form:"-"`
 }
 
 type userLoginForm struct {
-	Email					string `form:"email"`
-	Password				string `form:"password"`
-	validator.Validator		`form:"-"`
+	Email               string `form:"email"`
+	Password            string `form:"password"`
+	validator.Validator `form:"-"`
 }
 
 type userChangePasswordForm struct {
-	CurrentPassword			string `form:"currentPassword"`
-	NewPassword				string `form:"newPassword"`
-	NewPasswordConfirm		string `form:"newPasswordConfirm"`
-	validator.Validator		`form:"-"`
+	CurrentPassword     string `form:"currentPassword"`
+	NewPassword         string `form:"newPassword"`
+	NewPasswordConfirm  string `form:"newPasswordConfirm"`
+	validator.Validator `form:"-"`
 }
 
 type userChangeNameForm struct {
-	NewName					string `form:"newName"`
-	validator.Validator		`form:"-"`
+	NewName             string `form:"newName"`
+	validator.Validator `form:"-"`
 }
 
 type playerAssignUserForm struct {
-	PlayerID				int `form:"playerID"`
-	validator.Validator		`form:"-"`
+	PlayerID            int `form:"playerID"`
+	validator.Validator `form:"-"`
 }
 
 type playerCreateForm struct {
-	Name					string `form:"name"`
-	UserID					int `form:"userID"`
-	validator.Validator		`form:"-"`
+	Name                string `form:"name"`
+	UserID              int    `form:"userID"`
+	validator.Validator `form:"-"`
 }
 
 type playerChangeNameForm struct {
-	NewName					string `form:"newName"`
-	validator.Validator		`form:"-"`
+	NewName             string `form:"newName"`
+	validator.Validator `form:"-"`
 }
 
 type SessionCreateForm struct {
-	Date					string `form:"date"`
-	Avail_Games				[]string
-	Game					string `form:"game"`
-	Player_Scores			[]models.Player_Score
-	validator.Validator		`form:"-"`
+	Date                string `form:"date"`
+	Avail_Games         []string
+	Game                string `form:"game"`
+	Player_Scores       []models.Player_Score
+	validator.Validator `form:"-"`
 }
 
 type ScoresheetForm struct {
-	Game_ID					int `"-"`
-	ScoreInfo				[]models.ScoreConfig
-	validator.Validator		`form:"-"`
+	Game_ID             int `form:"-"`
+	ScoreInfo           []models.ScoreConfig
+	validator.Validator `form:"-"`
 }
 
 type ScoresheetEditForm struct {
-	Game_ID					int `"-"`
-	ScoreConfigs			[]models.ScoreConfig `"-"`
-	validator.Validator		`form:"-"`
+	Game_ID             int                  `form:"-"`
+	ScoreConfigs        []models.ScoreConfig `form:"-"`
+	validator.Validator `form:"-"`
 }
 
 //-----------------------------------------------------------------------------
@@ -129,7 +129,7 @@ func (app *application) gamesView(w http.ResponseWriter, r *http.Request) {
 func (app *application) gameView(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil || id < 1 {
-		http.NotFound(w,r)
+		http.NotFound(w, r)
 		return
 	}
 
@@ -137,7 +137,7 @@ func (app *application) gameView(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		switch {
 		case errors.Is(err, models.ErrNoRecord):
-			http.NotFound(w,r)
+			http.NotFound(w, r)
 		default:
 			app.serverError(w, r, err)
 		}
@@ -168,9 +168,9 @@ func (app *application) gameCreate(w http.ResponseWriter, r *http.Request) {
 	data := app.newTemplateData(r)
 
 	data.Form = gameCreateForm{
-		Year_pub:	time.Now().Year(),
-		Scoring: 	true,
-		State:		"owned",
+		Year_pub: time.Now().Year(),
+		Scoring:  true,
+		State:    "owned",
 	}
 
 	err := app.render(w, r, http.StatusOK, "addGame.tmpl.html", data)
@@ -194,12 +194,11 @@ func (app *application) gameCreatePost(w http.ResponseWriter, r *http.Request) {
 	// Add check for scoring?
 	// Add sensible checks for other fields (published player and time min < max)
 
-
 	if !form.Valid() {
-		data  := app.newTemplateData(r)
+		data := app.newTemplateData(r)
 		data.Form = form
-		
-		err := app.render (w, r, http.StatusUnprocessableEntity, "addGame.tmpl.html", data)
+
+		err := app.render(w, r, http.StatusUnprocessableEntity, "addGame.tmpl.html", data)
 		if err != nil {
 			app.serverError(w, r, err)
 		}
@@ -224,7 +223,7 @@ func (app *application) gameCreatePost(w http.ResponseWriter, r *http.Request) {
 func (app *application) gameScoresheet(w http.ResponseWriter, r *http.Request) {
 	gameID, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil || gameID < 1 {
-		http.NotFound(w,r)
+		http.NotFound(w, r)
 		return
 	}
 
@@ -232,17 +231,17 @@ func (app *application) gameScoresheet(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		switch {
 		case errors.Is(err, models.ErrNoRecord):
-			http.NotFound(w,r)
+			http.NotFound(w, r)
 		default:
 			app.serverError(w, r, err)
 		}
 		return
 	}
-	
+
 	data := app.newTemplateData(r)
 	data.Form = ScoresheetForm{
-		Game_ID:		gameID,
-		ScoreInfo:		[]models.ScoreConfig{},
+		Game_ID:   gameID,
+		ScoreInfo: []models.ScoreConfig{},
 	}
 	data.Game = game
 
@@ -261,7 +260,7 @@ func (app *application) gameScoresheetPost(w http.ResponseWriter, r *http.Reques
 func (app *application) gameScoresheetEdit(w http.ResponseWriter, r *http.Request) {
 	gameID, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil || gameID < 1 {
-		http.NotFound(w,r)
+		http.NotFound(w, r)
 		return
 	}
 
@@ -269,7 +268,7 @@ func (app *application) gameScoresheetEdit(w http.ResponseWriter, r *http.Reques
 	if err != nil {
 		switch {
 		case errors.Is(err, models.ErrNoRecord):
-			http.NotFound(w,r)
+			http.NotFound(w, r)
 		default:
 			app.serverError(w, r, err)
 		}
@@ -290,16 +289,16 @@ func (app *application) gameScoresheetEdit(w http.ResponseWriter, r *http.Reques
 		if err != nil {
 			app.serverError(w, r, err)
 		}
-	} else {						// Or create default values as an example
+	} else { // Or create default values as an example
 		scoreConfig := models.ScoreConfig{
-			Name:			"Rule 1",
-			Description:	"Description",
-			Multiplier:		1,
+			Name:        "Rule 1",
+			Description: "Description",
+			Multiplier:  1,
 		}
 		var scoreConfigs []models.ScoreConfig
 		data.Scoresheet = models.Scoresheet{
-			GameID:			gameID,
-			ScoreConfigs:	append(scoreConfigs, scoreConfig),
+			GameID:       gameID,
+			ScoreConfigs: append(scoreConfigs, scoreConfig),
 		}
 	}
 
@@ -312,10 +311,10 @@ func (app *application) gameScoresheetEdit(w http.ResponseWriter, r *http.Reques
 func (app *application) gameScoresheetEditPost(w http.ResponseWriter, r *http.Request) {
 	gameID, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil || gameID < 1 {
-		http.NotFound(w,r)
+		http.NotFound(w, r)
 		return
 	}
-	
+
 	var form ScoresheetEditForm
 
 	err = app.decodePostForm(r, &form)
@@ -331,10 +330,10 @@ func (app *application) gameScoresheetEditPost(w http.ResponseWriter, r *http.Re
 	// form.CheckField(validator.PermittedValue(form.State, "owned", "wanted"), "state", "This field must be either owned or wanted")
 
 	if !form.Valid() {
-		data  := app.newTemplateData(r)
+		data := app.newTemplateData(r)
 		data.Form = form
-		
-		err := app.render (w, r, http.StatusUnprocessableEntity, "scoresheetEdit.tmpl.html", data)
+
+		err := app.render(w, r, http.StatusUnprocessableEntity, "scoresheetEdit.tmpl.html", data)
 		if err != nil {
 			app.serverError(w, r, err)
 		}
@@ -357,14 +356,13 @@ func (app *application) gameScoresheetEditPost(w http.ResponseWriter, r *http.Re
 		description := r.FormValue(descKey)
 
 		scoreConfigs = append(scoreConfigs, models.ScoreConfig{
-			Name:			name,
-			Multiplier:		multiplier,
-			Description:	description,
+			Name:        name,
+			Multiplier:  multiplier,
+			Description: description,
 		})
 
 		i++
 	}
-
 
 	sExists, err := app.scoresheets.ExistsByGame(gameID)
 	if err != nil {
@@ -375,7 +373,7 @@ func (app *application) gameScoresheetEditPost(w http.ResponseWriter, r *http.Re
 	} else {
 		err = app.scoresheets.Insert(gameID, scoreConfigs)
 	}
-	
+
 	if err != nil {
 		app.serverError(w, r, err)
 		return
@@ -385,7 +383,6 @@ func (app *application) gameScoresheetEditPost(w http.ResponseWriter, r *http.Re
 
 	http.Redirect(w, r, fmt.Sprintf("/games/%d", gameID), http.StatusSeeOther)
 }
-
 
 //-----------------------------------------------------------------------------
 // USER FUNCTIONS
@@ -402,7 +399,7 @@ func (app *application) userSignup(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) userSignupPost(w http.ResponseWriter, r *http.Request) {
 	var form userSignupForm
-	
+
 	err := app.decodePostForm(r, &form)
 	if err != nil {
 		app.clientError(w, http.StatusBadRequest)
@@ -425,11 +422,11 @@ func (app *application) userSignupPost(w http.ResponseWriter, r *http.Request) {
 	if !form.Valid() {
 		data := app.newTemplateData(r)
 		data.Form = form
-		
+
 		err := app.render(w, r, http.StatusUnprocessableEntity,
 			"signup.tmpl.html", data)
 		if err != nil {
-			app.serverError(w,r, err)
+			app.serverError(w, r, err)
 		}
 		return
 	}
@@ -455,7 +452,7 @@ func (app *application) userSignupPost(w http.ResponseWriter, r *http.Request) {
 
 	app.sessionManager.Put(r.Context(), "flash",
 		"Your signup was successful. Please log in.")
-	
+
 	http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 }
 
@@ -486,7 +483,7 @@ func (app *application) userLoginPost(w http.ResponseWriter, r *http.Request) {
 		"This field cannot be blank")
 	form.CheckField(validator.MaxBytes(form.Password, 72), "password",
 		"This field must not be more than 72 bytes long")
-	
+
 	if !form.Valid() {
 		data := app.newTemplateData(r)
 		data.Form = form
@@ -546,7 +543,7 @@ func (app *application) userLogoutPost(w http.ResponseWriter, r *http.Request) {
 
 	app.sessionManager.Put(r.Context(), "flash",
 		"You've been logged out successfully")
-	
+
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -554,7 +551,7 @@ func (app *application) accountView(w http.ResponseWriter, r *http.Request) {
 	id := app.sessionManager.GetInt(r.Context(), "authenticatedUserID")
 
 	if id < 1 {
-		http.NotFound(w,r)
+		http.NotFound(w, r)
 		return
 	}
 
@@ -578,9 +575,9 @@ func (app *application) accountView(w http.ResponseWriter, r *http.Request) {
 			app.serverError(w, r, err)
 			return
 		}
-		
+
 	}
-	
+
 	data := app.newTemplateData(r)
 	data.User = user
 	if err == nil {
@@ -596,7 +593,7 @@ func (app *application) accountView(w http.ResponseWriter, r *http.Request) {
 func (app *application) changePass(w http.ResponseWriter, r *http.Request) {
 	data := app.newTemplateData(r)
 	data.Form = userChangePasswordForm{}
-	
+
 	err := app.render(w, r, http.StatusOK, "changePassword.tmpl.html", data)
 	if err != nil {
 		app.serverError(w, r, err)
@@ -616,7 +613,7 @@ func (app *application) changePassPost(w http.ResponseWriter, r *http.Request) {
 		"This field cannot be blank")
 	form.CheckField(validator.NotBlank(form.NewPassword), "newPassword",
 		"This field cannot be blank")
-		form.CheckField(validator.NotBlank(form.NewPasswordConfirm), "newPasswordConfirm",
+	form.CheckField(validator.NotBlank(form.NewPasswordConfirm), "newPasswordConfirm",
 		"This field cannot be blank")
 	form.CheckField(validator.MinChars(form.NewPassword, 8), "newPassword",
 		"This field must be at least 8 characters long")
@@ -632,11 +629,11 @@ func (app *application) changePassPost(w http.ResponseWriter, r *http.Request) {
 	if !form.Valid() {
 		data := app.newTemplateData(r)
 		data.Form = form
-		
+
 		err := app.render(w, r, http.StatusUnprocessableEntity,
 			"changePassword.tmpl.html", data)
 		if err != nil {
-			app.serverError(w,r, err)
+			app.serverError(w, r, err)
 		}
 		return
 	}
@@ -705,7 +702,7 @@ func (app *application) changePassPost(w http.ResponseWriter, r *http.Request) {
 		form.AddNonFieldError("Unknown error")
 		data := app.newTemplateData(r)
 		data.Form = form
-	
+
 		err := app.render(w, r, http.StatusUnprocessableEntity,
 			"changePassword.tmpl.html", data)
 		if err != nil {
@@ -723,10 +720,9 @@ func (app *application) changePassPost(w http.ResponseWriter, r *http.Request) {
 		"Password changed successfully!")
 
 	app.sessionManager.Put(r.Context(), "flash", "Password changed successfully!")
-	
+
 	http.Redirect(w, r, "/user/account", http.StatusSeeOther)
 
-	
 }
 
 func (app *application) userChangeName(w http.ResponseWriter, r *http.Request) {
@@ -736,17 +732,17 @@ func (app *application) userChangeName(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		switch {
 		case errors.Is(err, models.ErrNoRecord):
-			http.NotFound(w,r)
+			http.NotFound(w, r)
 		default:
 			app.serverError(w, r, err)
 		}
 		return
 	}
-	
+
 	data := app.newTemplateData(r)
 	data.User = user
 	data.Form = userChangeNameForm{}
-	
+
 	err = app.render(w, r, http.StatusOK, "userChangeName.tmpl.html", data)
 	if err != nil {
 		app.serverError(w, r, err)
@@ -768,11 +764,11 @@ func (app *application) userChangeNamePost(w http.ResponseWriter, r *http.Reques
 	if !form.Valid() {
 		data := app.newTemplateData(r)
 		data.Form = form
-		
+
 		err := app.render(w, r, http.StatusUnprocessableEntity,
 			"userChangeName.tmpl.html", data)
 		if err != nil {
-			app.serverError(w,r, err)
+			app.serverError(w, r, err)
 		}
 		return
 	}
@@ -781,14 +777,14 @@ func (app *application) userChangeNamePost(w http.ResponseWriter, r *http.Reques
 
 	err = app.users.UpdateName(id, form.NewName)
 	if err != nil {
-			app.serverError(w, r, err)
+		app.serverError(w, r, err)
 	}
 
 	if err != nil {
 		form.AddNonFieldError("Unknown error")
 		data := app.newTemplateData(r)
 		data.Form = form
-	
+
 		err := app.render(w, r, http.StatusUnprocessableEntity,
 			"userChangeName.tmpl.html", data)
 		if err != nil {
@@ -797,8 +793,8 @@ func (app *application) userChangeNamePost(w http.ResponseWriter, r *http.Reques
 	}
 
 	app.sessionManager.Put(r.Context(), "flash", "Name changed successfully!")
-	
-	http.Redirect(w, r, "/user/account", http.StatusSeeOther)	
+
+	http.Redirect(w, r, "/user/account", http.StatusSeeOther)
 }
 
 func (app *application) playerAssignUser(w http.ResponseWriter, r *http.Request) {
@@ -831,14 +827,14 @@ func (app *application) playerAssignUserPost(w http.ResponseWriter, r *http.Requ
 
 	err = app.players.UpdateUserID(id, form.PlayerID)
 	if err != nil {
-			app.serverError(w, r, err)
+		app.serverError(w, r, err)
 	}
 
 	if err != nil {
 		form.AddNonFieldError("Unknown error")
 		data := app.newTemplateData(r)
 		data.Form = form
-	
+
 		err := app.render(w, r, http.StatusUnprocessableEntity,
 			"playersAssignUser.tmpl.html", data)
 		if err != nil {
@@ -847,8 +843,8 @@ func (app *application) playerAssignUserPost(w http.ResponseWriter, r *http.Requ
 	}
 
 	app.sessionManager.Put(r.Context(), "flash", "Player assigned!")
-	
-	http.Redirect(w, r, "/user/account", http.StatusSeeOther)	
+
+	http.Redirect(w, r, "/user/account", http.StatusSeeOther)
 }
 
 //-----------------------------------------------------------------------------
@@ -892,11 +888,11 @@ func (app *application) playerCreatePost(w http.ResponseWriter, r *http.Request)
 				if err != nil {
 					app.serverError(w, r, err)
 				}
-		return
+				return
 			default:
 				app.serverError(w, r, err)
 			}
-		return
+			return
 		}
 
 		// This isn't properly checking!!!
@@ -924,16 +920,15 @@ func (app *application) playerCreatePost(w http.ResponseWriter, r *http.Request)
 
 	if !form.Valid() {
 		form.UserID = 0
-		data  := app.newTemplateData(r)
+		data := app.newTemplateData(r)
 		data.Form = form
-		
-		err := app.render (w, r, http.StatusUnprocessableEntity, "addPlayer.tmpl.html", data)
+
+		err := app.render(w, r, http.StatusUnprocessableEntity, "addPlayer.tmpl.html", data)
 		if err != nil {
 			app.serverError(w, r, err)
 		}
 		return
 	}
-
 
 	// this currently fails when user id = 0 since it's set as a foreign key
 	// 0 doesn't match a user in users, so errors out
@@ -952,7 +947,7 @@ func (app *application) playerCreatePost(w http.ResponseWriter, r *http.Request)
 func (app *application) playerView(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil || id < 1 {
-		http.NotFound(w,r)
+		http.NotFound(w, r)
 		return
 	}
 
@@ -960,7 +955,7 @@ func (app *application) playerView(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		switch {
 		case errors.Is(err, models.ErrNoRecord):
-			http.NotFound(w,r)
+			http.NotFound(w, r)
 		default:
 			app.serverError(w, r, err)
 		}
@@ -995,7 +990,7 @@ func (app *application) playerView(w http.ResponseWriter, r *http.Request) {
 func (app *application) playerChangeName(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil || id < 1 {
-		http.NotFound(w,r)
+		http.NotFound(w, r)
 		return
 	}
 
@@ -1003,17 +998,17 @@ func (app *application) playerChangeName(w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		switch {
 		case errors.Is(err, models.ErrNoRecord):
-			http.NotFound(w,r)
+			http.NotFound(w, r)
 		default:
 			app.serverError(w, r, err)
 		}
 		return
 	}
-	
+
 	data := app.newTemplateData(r)
 	data.Player = player
 	data.Form = playerChangeNameForm{}
-	
+
 	err = app.render(w, r, http.StatusOK, "playerChangeName.tmpl.html", data)
 	if err != nil {
 		app.serverError(w, r, err)
@@ -1035,31 +1030,31 @@ func (app *application) playerChangeNamePost(w http.ResponseWriter, r *http.Requ
 	if !form.Valid() {
 		data := app.newTemplateData(r)
 		data.Form = form
-		
+
 		err := app.render(w, r, http.StatusUnprocessableEntity,
 			"playerChangeName.tmpl.html", data)
 		if err != nil {
-			app.serverError(w,r, err)
+			app.serverError(w, r, err)
 		}
 		return
 	}
 
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil || id < 1 {
-		http.NotFound(w,r)
+		http.NotFound(w, r)
 		return
 	}
 
 	err = app.players.UpdateName(id, form.NewName)
 	if err != nil {
-			app.serverError(w, r, err)
+		app.serverError(w, r, err)
 	}
 
 	if err != nil {
 		form.AddNonFieldError("Unknown error")
 		data := app.newTemplateData(r)
 		data.Form = form
-	
+
 		err := app.render(w, r, http.StatusUnprocessableEntity,
 			"playerChangeName.tmpl.html", data)
 		if err != nil {
@@ -1068,8 +1063,8 @@ func (app *application) playerChangeNamePost(w http.ResponseWriter, r *http.Requ
 	}
 
 	app.sessionManager.Put(r.Context(), "flash", "Name changed successfully!")
-	
-	http.Redirect(w, r, fmt.Sprintf("/players/%d", id), http.StatusSeeOther)	
+
+	http.Redirect(w, r, fmt.Sprintf("/players/%d", id), http.StatusSeeOther)
 }
 
 func (app *application) playersView(w http.ResponseWriter, r *http.Request) {
@@ -1097,7 +1092,7 @@ func (app *application) sessionCreate(w http.ResponseWriter, r *http.Request) {
 
 	gameID, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil || gameID < 1 {
-		http.NotFound(w,r)
+		http.NotFound(w, r)
 		return
 	}
 
@@ -1120,7 +1115,7 @@ func (app *application) sessionCreate(w http.ResponseWriter, r *http.Request) {
 			app.serverError(w, r, err)
 		}
 		data.Scoresheet = scoresheet
-	// } else {						// Or create default values as an example
+		// } else {						// Or create default values as an example
 		// scoreConfig := models.ScoreConfig{
 		// 	Name:			"Rule 1",
 		// 	Description:	"Description",
@@ -1137,9 +1132,8 @@ func (app *application) sessionCreate(w http.ResponseWriter, r *http.Request) {
 	initForm.Date = time.Now().Format("2006-01-02") // must be in this format to load
 	data.Form = initForm
 
-
 	// Get list of available players to pass on as drop down
-	
+
 	// temporary place holder
 	players, err := app.players.GetList(50)
 	if err != nil {
@@ -1148,7 +1142,9 @@ func (app *application) sessionCreate(w http.ResponseWriter, r *http.Request) {
 	}
 	data.Players = players
 
-	ps := models.Player_Score{0, 0}
+	ps := models.Player_Score{
+		Player_ID: 0,
+		Score:     0}
 	initForm.Player_Scores = append(initForm.Player_Scores, ps)
 
 	data.Form = initForm
