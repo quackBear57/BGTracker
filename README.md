@@ -9,12 +9,14 @@ Professional Package.
 - Update handlers to accept score from new session page or scoresheet page
 -
 Working theory:
+```
 Game page
-  |
-  | Link to log session
-  | 
-  |__-> Players and basic score page
-       |
-       | Link to Scoresheet
-       |
-       |___-> Load scoresheet with players selected in last page
+    |   
+    | Link to log session
+    | 
+    |__-> Players and basic score page
+            |
+            | Link to Scoresheet
+            |
+            |___-> Load scoresheet with players selected in last page
+```
