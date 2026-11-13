@@ -16,9 +16,15 @@
             <spanSmall>Price: {{printf "%.2f" .Price}}</spanSmall>
         </div>
         <pre><code>{{.Description}}</code></pre>
-        <div class="minorInfo">
-            <a href="/sessions/new/{{.ID}}">Log Play Session</a>
-        </div>
+        {{if $.IsAuthenticated}}
+            <div class="minorInfo">
+                <a href="/sessions/new/{{.ID}}">Log Play Session</a>
+            </div>
+        {{else}}
+            <div class="minorInfo">
+                <a href="/sessions/new/{{.ID}}">Login to Log Play Session</a>
+            </div>
+        {{end}}
         <div class="minorInfo">
             <codeSmall>State: {{toTitle .State}}</codeSmall>
         </div>
